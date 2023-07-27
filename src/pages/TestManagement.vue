@@ -1,11 +1,15 @@
 <script setup>
 import { ref, provide, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useExamStore } from "stores/exam";
+import { useSubjectStore } from "stores/subject";
 import moment from 'moment'
-import { api } from 'boot/axios'
 import AddTestDialog from "components/AddTestDialog.vue";
 import AddQuestionDialog from "components/AddQuestionDialog.vue";
 
-const lessons = ref([])
+const examStore = useExamStore()
+const subjectStore = useSubjectStore()
+const lessons = storeToRefs(examStore).exams
 const openTestDialog = ref(false)
 const openQuestionDialog = ref(false)
 const columns = [
@@ -40,16 +44,12 @@ const columns = [
     format: val => moment(val).format('MM-DD-YYYY')
   },
 ]
-const getLessons = async () => {
-  const res = await api.get('/lessons');
-  lessons.value = res.data
-}
-console.log(moment('2023-07-25T12:39:06.000000Z'))
+
 provide('isTestActive', openTestDialog)
 provide('isQuestionActive', openQuestionDialog)
 
 onMounted(async () => {
-  await getLessons()
+  await Promise.all([examStore.getExams(), subjectStore.getSubjects()])
 })
 </script>
 

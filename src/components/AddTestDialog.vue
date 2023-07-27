@@ -1,7 +1,23 @@
 <script setup>
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
+import { api } from "boot/axios";
+import { useExamStore } from "stores/exam";
+import { useSubjectStore } from "stores/subject";
+import { storeToRefs } from "pinia";
+
+const examStore = useExamStore()
+const subjectStore = useSubjectStore()
+const exams = storeToRefs(examStore).examOpts
+const subjects = storeToRefs(subjectStore).subjectOpts
+
+const examName = ref('')
+const examDuration = ref(0)
+const examSelector = ref(null)
+const subjectSelector = ref(null)
+
 const isTestActive = inject('isTestActive')
 const isQuestionActive = inject('isQuestionActive')
+
 const columns = [
   {
     name: 'name',
@@ -29,6 +45,20 @@ const rows = [
     iron: '1%'
   },
 ]
+const newExam = async () => {
+  const data = {
+    'lessonName': examName.value,
+    'answerTime': +examDuration.value,
+    'userCreatedId': 1
+  }
+  const response = await api.post('/lessons', data)
+  if (response.status === 200) {
+    // alert success
+    examName.value = ''
+    examDuration.value = 0
+    await examStore.getExams()
+  }
+}
 </script>
 
 <template lang="pug">
@@ -41,15 +71,23 @@ q-dialog(v-model="isTestActive" full-width)
 
     q-card-section.scroll(class="max-h-[50vh]")
       q-form
-        .row.items-center
+        .row.items-center.q-col-gutter-md
           .col-3
-            q-input(label="Tên đề thi" outlined)
+            q-input(label="Tên đề thi" outlined v-model="examName")
           .col-3
-            q-input.ml-4(label="Thời gian (giây)" outlined type="number")
+            q-input(label="Thời gian (phút)" outlined type="number" v-model="examDuration")
+          .col-6
+            q-btn(label="Thêm" color="primary" @click="newExam" :disable="!examDuration || !examName")
+          .col-12
+            .text-h6 Thêm môn học vào đề thi
           .col-3
-            q-btn.ml-4(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")
+            q-select(label="Đề thi" outlined :options='exams' v-model="examSelector")
+          .col-3
+            q-select(label="Môn học" outlined :options='subjects' v-model="subjectSelector")
+          .col-3
+            q-btn(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")
 
-    q-card-section
+    //q-card-section
       q-table(
         title="Câu hỏi"
         :rows="rows"
