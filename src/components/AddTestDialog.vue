@@ -1,49 +1,62 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { provide, inject, ref } from 'vue'
 import { api } from "boot/axios";
+import moment from 'moment'
 import { useExamStore } from "stores/exam";
 import { useSubjectStore } from "stores/subject";
+import { useQuestionStore } from "stores/question";
 import { storeToRefs } from "pinia";
+import ExamDetailDialog from "components/ExamDetailDialog.vue";
 
 const examStore = useExamStore()
 const subjectStore = useSubjectStore()
+const questionStore = useQuestionStore()
 const exams = storeToRefs(examStore).examOpts
 const subjects = storeToRefs(subjectStore).subjectOpts
+const questions = storeToRefs(questionStore).questions
 
 const examName = ref('')
 const examDuration = ref(0)
 const examSelector = ref(null)
 const subjectSelector = ref(null)
+const isExamDetailActive = ref(false)
 
 const isTestActive = inject('isTestActive')
 const isQuestionActive = inject('isQuestionActive')
 
 const columns = [
   {
-    name: 'name',
+    name: 'id',
     required: true,
     label: 'ID',
     align: 'left',
-    field: row => row.name,
+    field: row => row.id,
     format: val => `${val}`,
     sortable: true
   },
-  { name: 'calories', align: 'center', label: 'Nội dung', field: 'calories', sortable: true },
-  { name: 'fat', label: 'Người tạo', field: 'fat', sortable: true },
-  { name: 'carbs', label: 'Ngày tạo', field: 'carbs' },
-  { name: 'protein', label: 'Ngày sửa', field: 'protein' },
-]
-const rows = [
-  {
-    name: 'Frozen Yogurt',
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    sodium: 87,
-    calcium: '14%',
-    iron: '1%'
+  { name: 'title', align: 'left', label: 'Tiêu đề', field: 'title', sortable: true },
+  { name: 'content',
+    align: 'left',
+    label: 'Nội dung',
+    field: 'content',
+    sortable: true,
+    style: 'width: 300px',
+    format: val => val.split(' ').slice(0, 10).join(' ') + '...'
   },
+  { name: 'type',
+    align: 'left',
+    label: 'Loại câu hỏi',
+    field: 'type',
+    sortable: true,
+    format: val => val === 1 ? 'Lý thuyết' : 'Thực hành'
+  },
+  { name: 'answer',
+    align: 'left',
+    label: 'Đáp án',
+    field: 'answer',
+  },
+  { name: 'created_at', label: 'Ngày tạo', field: 'created_at', format: val => moment(val).format('MM-DD-YYYY') },
+  { name: 'updated_at', label: 'Ngày sửa', field: 'updated_at', format: val => moment(val).format('MM-DD-YYYY') },
 ]
 const newExam = async () => {
   const data = {
@@ -59,6 +72,15 @@ const newExam = async () => {
     await examStore.getExams()
   }
 }
+const addSubjectToExam = async () => {
+  const data = {
+    examId: examSelector.value.value,
+    subjectId: subjectSelector.value.value,
+  }
+  await subjectStore.addSubjectToExam(data)
+}
+
+provide('isExamDetailActive', isExamDetailActive)
 </script>
 
 <template lang="pug">
@@ -85,19 +107,25 @@ q-dialog(v-model="isTestActive" full-width)
           .col-3
             q-select(label="Môn học" outlined :options='subjects' v-model="subjectSelector")
           .col-3
+            q-btn(label="Thêm" color="primary" @click="addSubjectToExam")
+          .col-12
             q-btn(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")
+            q-btn.ml-4(label="Thêm chi tiết đề thi" color="primary" @click="isExamDetailActive = !isExamDetailActive")
 
-    //q-card-section
+    q-card-section
       q-table(
         title="Câu hỏi"
-        :rows="rows"
+        :rows="questions"
         :columns="columns"
         row-key="name"
+        wrap-cells
       )
 
     q-card-actions.justify-end
       q-btn(flat label="Đóng" color="red" v-close-popup)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
+
+  exam-detail-dialog
 </template>
 
 <style scoped lang="sass">

@@ -13,5 +13,8 @@ export const useSubjectStore = defineStore('subject', {
       const res = await api.get('/subjects');
       this.subjects = res.data
     },
+    async addSubjectToExam(payload) {
+      const res = await api.post('/subjects/addToExam', payload)
+    }
   },
 });

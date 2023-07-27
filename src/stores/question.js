@@ -8,7 +8,7 @@ export const useQuestionStore = defineStore('question', {
   getters: {
   },
   actions: {
-    async getQuestion() {
+    async getQuestions() {
       const res = await api.get('/questions');
       this.questions = res.data
     },

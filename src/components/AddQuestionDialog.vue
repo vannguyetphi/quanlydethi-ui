@@ -39,6 +39,17 @@ const newQuestion = async () => {
   questionObj.answer = model.value.join(',')
   questionObj.type = questionObj.type.value
   await questionStore.newQuestion(questionObj)
+  await questionStore.getQuestions()
+  questionObj.title = ''
+  questionObj.content = ''
+  questionObj.type = ''
+  questionObj.level = ''
+  questionObj.A = ''
+  questionObj.B = ''
+  questionObj.C = ''
+  questionObj.D = ''
+  questionObj.answer = ''
+  questionObj.img = ''
 }
 </script>
 
@@ -59,7 +70,7 @@ q-dialog(v-model="isActive" full-width)
             q-select(
               label="Loại câu hỏi"
               outlined
-              :options='[{ label: "Lý thuyết", value: 1 }, { label: "Thực hành", value: 1}]'
+              :options='[{ label: "Lý thuyết", value: 1 }, { label: "Thực hành", value: 2}]'
               v-model="questionObj.type"
             )
           .col-4
