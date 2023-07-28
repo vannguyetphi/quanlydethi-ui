@@ -1,14 +1,33 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { inject, ref, provide } from 'vue'
 import { storeToRefs } from "pinia";
 import { useExamStore } from "stores/exam";
+import { useQuestionStore } from "stores/question";
+import QuestionsTable from "components/QuestionsTable.vue";
 
 const examStore = useExamStore()
-const exams = storeToRefs(examStore).exams
+const questionStore = useQuestionStore()
+const exams = storeToRefs(examStore).examOpts
+const examSubjects = storeToRefs(examStore).examSubjects
+const examSelector = ref(null)
+const targetSubjectId = ref(null)
+const targetExamId = ref(null)
+const isQuestionActive = ref(false)
 
-console.log(exams)
-
+const onExamChange = async (v) => {
+  targetExamId.value = v.value
+  await examStore.getExamSubjects({ examId: v.value })
+}
+const openQuestionTable = (subjectId) => {
+  targetSubjectId.value = subjectId
+  isQuestionActive.value = !isQuestionActive.value
+}
+const handleSelected = async (data) => {
+  const questionIds = data.value.map(d => d.id)
+  await questionStore.addQuestionToExam({ examId: targetExamId.value, subjectId: targetSubjectId.value, questionIds })
+}
 const isActive = inject('isExamDetailActive')
+provide('isQuestionActive', isQuestionActive)
 </script>
 
 <template lang="pug">
@@ -20,8 +39,18 @@ q-dialog(v-model="isActive" full-width)
     q-separator
 
     q-card-section.scroll(class="max-h-[50vh]")
-      .row
-        q-select(label="2123" outlined)
+      .row.q-col-gutter-md
+        .col-3
+          q-select(label="Chọn đề thi" outlined :options="exams" v-model="examSelector" @update:model-value="onExamChange")
+        .col-12
+          q-list(bordered v-if="examSubjects.length > 0")
+            q-item.q-my-sm(v-for="subject in examSubjects" :key="subject.subjectId")
+              q-item-section
+                q-item-label {{ subject.name }}
+              q-item-section(side)
+                q-btn(color="primary" label="Thêm câu hỏi" no-caps unelevated @click="openQuestionTable(subject.subjectId)")
+          h3.text-lg(v-else) Không có môn học cho đề thi này
+          questions-table(@setSelected="handleSelected")
 
     q-card-actions.justify-end
       q-btn(flat label="Đóng" color="red" v-close-popup)

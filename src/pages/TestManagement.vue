@@ -7,13 +7,16 @@ import { useQuestionStore } from "stores/question";
 import moment from 'moment'
 import AddTestDialog from "components/AddTestDialog.vue";
 import AddQuestionDialog from "components/AddQuestionDialog.vue";
+import ExamViewDialog from "components/ExamViewDialog.vue";
 
 const examStore = useExamStore()
 const subjectStore = useSubjectStore()
 const questionStore = useQuestionStore()
 const lessons = storeToRefs(examStore).exams
+const examInfo = ref({})
 const openTestDialog = ref(false)
 const openQuestionDialog = ref(false)
+const detailView = ref(false)
 const columns = [
   {
     name: 'name',
@@ -47,8 +50,16 @@ const columns = [
   },
 ]
 
+const rowClick = async (_, row) => {
+  examInfo.value = row
+  detailView.value = !detailView.value
+  await questionStore.getExamQuestions({ examId: row.id })
+}
+
 provide('isTestActive', openTestDialog)
 provide('isQuestionActive', openQuestionDialog)
+provide('detailView', detailView)
+provide('examInfo', examInfo)
 
 onMounted(async () => {
   await Promise.all([examStore.getExams(), subjectStore.getSubjects(), questionStore.getQuestions()])
@@ -74,10 +85,12 @@ onMounted(async () => {
     :rows="lessons"
     :columns="columns"
     row-key="name"
+    @row-click="rowClick"
   )
 
   add-test-dialog
   add-question-dialog
+  exam-view-dialog
 </template>
 
 <style scoped lang="sass">
