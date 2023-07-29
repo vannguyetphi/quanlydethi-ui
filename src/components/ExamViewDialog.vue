@@ -48,7 +48,7 @@ q-dialog(v-model="isActive" full-width)
             q-tab-panels(v-model="tab" animated)
               q-tab-panel(:name="subject[0].name" v-for="subject in examDetails" :key="subject")
                 div(v-for="sub in subject")
-                  .text-h6 {{ sub.title }}
+                  .text-h6 {{ sub.title }}: {{ sub.content }}
                   p.mt-4
                     strong Đáp án A:
                     span.ml-1 {{ sub.A }}

@@ -21,7 +21,7 @@ const examDuration = ref(0)
 const examSelector = ref(null)
 const subjectSelector = ref(null)
 const isExamDetailActive = ref(false)
-const subjectDialog = ref(true)
+const subjectDialog = ref(false)
 
 const isTestActive = inject('isTestActive')
 const isQuestionActive = inject('isQuestionActive')
