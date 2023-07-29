@@ -1,19 +1,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { useAuthStore } from 'stores/auth'
 
-const authStore = useAuthStore()
-const authUser = reactive({
-  username: '',
-  password: ''
+const student = reactive({
+  fullName: '',
+  idNumber: '',
+  class: ''
 })
-const loading = ref(false)
-
-const auth = async () => {
-  loading.value = true
-  await authStore.authenticate(authUser)
-  loading.value = false
-}
 </script>
 
 <template lang="pug">
@@ -29,8 +21,9 @@ q-layout
                   img(src="~assets/logo.png")
                 .text-h6.ml-4 Trường hạ sĩ quan xe tăng 1
               q-form.mt-5
-                q-input.mt-5(label="Tên đăng nhập" outlined v-model="authUser.username")
-                q-input.mt-5(label="Mật khẩu" outlined type="password" v-model="authUser.password")
+                q-input.mt-5(label="Họ và tên" outlined v-model="student.fullName")
+                q-input.mt-5(label="Số báo danh" outlined v-model="student.idNumber")
+                q-select.mt-5(label="Lớp" outlined v-model="student.class")
                 q-btn.w-full.mt-5(
                   label="Đăng nhập"
                   color="primary"
@@ -40,10 +33,10 @@ q-layout
                   @click="auth"
                 )
                 q-btn.w-full.mt-5(
-                  label="Học viên"
+                  label="Giáo viên"
                   color="secondary"
                   size="lg"
-                  :to="{ name: 'StudentLoginPage' }"
+                  :to="{ name: 'LoginPage' }"
                 )
         .col-6
           q-card.h-full(flat)
