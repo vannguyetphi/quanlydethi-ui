@@ -31,9 +31,9 @@ const columns = [
     field: 'lessonName',
     sortable: true
   },
-  { name: 'userCreatedId',
+  { name: 'name',
     label: 'Người tạo',
-    field: 'userCreatedId',
+    field: 'name',
     sortable: true
   },
   { name: 'created_at',
@@ -69,6 +69,8 @@ onMounted(async () => {
 <template  lang="pug">
 .mt-12
   h2.text-center.text-5xl Quản lý đề thi
+  .text-right.px-5
+    q-btn(label="Quay về" to="/" color="primary" icon="arrow_back" )
   .row.items-center.bg-purple.p-5(class="mt-[50px]")
     .col-4
         q-input(label="Tìm kiếm" filled bg-color="white")
@@ -76,10 +78,7 @@ onMounted(async () => {
               q-icon(name="search")
     .col-8
       .flex.justify-between.px-8
-        q-btn(label="Thêm" no-caps color="primary" @click="openTestDialog = !openTestDialog")
-        q-btn(label="Sửa" no-caps color="secondary")
-        q-btn(label="Xóa" no-caps color="red")
-        q-btn(label="Đảo đề" no-caps color="warning")
+        q-btn(label="Thêm đề thi" no-caps color="primary" @click="openTestDialog = !openTestDialog" size="lg")
   q-table(
     title="Đề thi"
     :rows="lessons"

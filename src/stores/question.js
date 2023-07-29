@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import {api} from "boot/axios";
+import { Notify } from 'quasar'
 
 export const useQuestionStore = defineStore('question', {
   state: () => ({
@@ -26,10 +27,22 @@ export const useQuestionStore = defineStore('question', {
     },
     async newQuestion(payload) {
       const res = await api.post('/questions', payload)
-      console.log(res)
     },
     async addQuestionToExam({ examId, subjectId, questionIds }) {
-      await Promise.all(questionIds.map(qId => api.post('/questionDetails', { examId, subjectId, questionId: qId })));
+      try {
+        await Promise.all(questionIds.map(qId => api.post('/questionDetails', { examId, subjectId, questionId: qId })));
+        Notify.create({
+          type: 'positive',
+          message: 'Thêm câu hỏi vào môn học thành công',
+          position: 'top',
+        })
+      } catch (err) {
+        Notify.create({
+          type: 'negative',
+          message: 'Thêm câu hỏi vào môn học thất bại',
+          position: 'top',
+        })
+      }
     },
     async getExamQuestions({ examId }) {
       const res = await api.get('/questionDetails/getQuestionDetails', { params: { examId } })

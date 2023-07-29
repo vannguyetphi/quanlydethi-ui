@@ -47,6 +47,7 @@ const confirm = async () => {
   selected.value = []
 }
 const isActive = inject('isQuestionActive')
+const handleSelectedLoading = inject('handleSelectedLoading')
 </script>
 
 <template lang="pug">
@@ -63,7 +64,7 @@ q-dialog(v-model="isActive" full-width)
         wrap-cells
       )
       .mt-5.text-right
-        q-btn(label="Xác nhận" color="primary" @click="confirm" v-close-popup)
+        q-btn(label="Xác nhận" color="primary" @click="confirm" :disabled="handleSelectedLoading" :loading="handleSelectedLoading")
 </template>
 
 <style scoped lang="sass">

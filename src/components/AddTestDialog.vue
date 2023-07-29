@@ -1,7 +1,9 @@
 <script setup>
 import { provide, inject, ref } from 'vue'
+import { Notify } from 'quasar'
 import { api } from "boot/axios";
 import moment from 'moment'
+import { useAuthStore } from "stores/auth";
 import { useExamStore } from "stores/exam";
 import { useSubjectStore } from "stores/subject";
 import { useQuestionStore } from "stores/question";
@@ -9,6 +11,7 @@ import { storeToRefs } from "pinia";
 import ExamDetailDialog from "components/ExamDetailDialog.vue";
 import AddSubjectDialog from "components/AddSubjectDialog.vue";
 
+const authStore = useAuthStore()
 const examStore = useExamStore()
 const subjectStore = useSubjectStore()
 const questionStore = useQuestionStore()
@@ -60,11 +63,14 @@ const columns = [
   { name: 'created_at', label: 'Ngày tạo', field: 'created_at', format: val => moment(val).format('MM-DD-YYYY') },
   { name: 'updated_at', label: 'Ngày sửa', field: 'updated_at', format: val => moment(val).format('MM-DD-YYYY') },
 ]
+
+const newExamLoading = ref(false)
 const newExam = async () => {
+  newExamLoading.value = true
   const data = {
     'lessonName': examName.value,
     'answerTime': +examDuration.value,
-    'userCreatedId': 1
+    'userCreatedId': authStore.getUser.id
   }
   const response = await api.post('/lessons', data)
   if (response.status === 200) {
@@ -72,14 +78,29 @@ const newExam = async () => {
     examName.value = ''
     examDuration.value = 0
     await examStore.getExams()
+    Notify.create({
+      type: 'positive',
+      message: 'Thêm đề thi thành công',
+      position: 'top',
+    })
   }
+  newExamLoading.value = false
 }
+
+const addSubjectToExamLoading = ref(false)
 const addSubjectToExam = async () => {
+  addSubjectToExamLoading.value = true
   const data = {
     examId: examSelector.value.value,
     subjectId: subjectSelector.value.value,
   }
   await subjectStore.addSubjectToExam(data)
+  Notify.create({
+    type: 'positive',
+    message: 'Thêm môn học vào đề thi thành công',
+    position: 'top',
+  })
+  addSubjectToExamLoading.value = false
 }
 
 provide('isExamDetailActive', isExamDetailActive)
@@ -102,7 +123,7 @@ q-dialog(v-model="isTestActive" full-width)
           .col-3
             q-input(label="Thời gian (phút)" outlined type="number" v-model="examDuration")
           .col-6
-            q-btn(label="Thêm" color="primary" @click="newExam" :disable="!examDuration || !examName")
+            q-btn(label="Thêm" color="primary" @click="newExam" :disable="(!examDuration || !examName) || newExamLoading" :loading="newExamLoading")
           .col-12
             .text-h6 Thêm môn học vào đề thi
           .col-3
@@ -110,7 +131,13 @@ q-dialog(v-model="isTestActive" full-width)
           .col-3
             q-select(label="Môn học" outlined :options='subjects' v-model="subjectSelector")
           .col-3
-            q-btn(label="Thêm" color="primary" @click="addSubjectToExam")
+            q-btn(
+              label="Thêm"
+              color="primary"
+              @click="addSubjectToExam"
+              :disabled="(!examSelector || !subjectSelector) || addSubjectToExamLoading"
+              :loading="addSubjectToExamLoading"
+            )
           .col-12
             q-btn(label="Thêm môn học" color="primary" @click="subjectDialog = !subjectDialog")
             q-btn.ml-4(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")

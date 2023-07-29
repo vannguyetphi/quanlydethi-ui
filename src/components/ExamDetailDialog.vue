@@ -22,12 +22,17 @@ const openQuestionTable = (subjectId) => {
   targetSubjectId.value = subjectId
   isQuestionActive.value = !isQuestionActive.value
 }
+const handleSelectedLoading = ref(false)
 const handleSelected = async (data) => {
+  handleSelectedLoading.value = true
   const questionIds = data.value.map(d => d.id)
   await questionStore.addQuestionToExam({ examId: targetExamId.value, subjectId: targetSubjectId.value, questionIds })
+  handleSelectedLoading.value = false
+    isQuestionActive.value = false
 }
 const isActive = inject('isExamDetailActive')
 provide('isQuestionActive', isQuestionActive)
+provide('handleSelectedLoading', handleSelectedLoading)
 </script>
 
 <template lang="pug">
