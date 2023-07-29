@@ -7,6 +7,7 @@ import { useSubjectStore } from "stores/subject";
 import { useQuestionStore } from "stores/question";
 import { storeToRefs } from "pinia";
 import ExamDetailDialog from "components/ExamDetailDialog.vue";
+import AddSubjectDialog from "components/AddSubjectDialog.vue";
 
 const examStore = useExamStore()
 const subjectStore = useSubjectStore()
@@ -20,6 +21,7 @@ const examDuration = ref(0)
 const examSelector = ref(null)
 const subjectSelector = ref(null)
 const isExamDetailActive = ref(false)
+const subjectDialog = ref(true)
 
 const isTestActive = inject('isTestActive')
 const isQuestionActive = inject('isQuestionActive')
@@ -81,6 +83,7 @@ const addSubjectToExam = async () => {
 }
 
 provide('isExamDetailActive', isExamDetailActive)
+provide('subjectDialog', subjectDialog)
 </script>
 
 <template lang="pug">
@@ -109,7 +112,8 @@ q-dialog(v-model="isTestActive" full-width)
           .col-3
             q-btn(label="Thêm" color="primary" @click="addSubjectToExam")
           .col-12
-            q-btn(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")
+            q-btn(label="Thêm môn học" color="primary" @click="subjectDialog = !subjectDialog")
+            q-btn.ml-4(label="Thêm câu hỏi" color="primary" @click="isQuestionActive = !isQuestionActive")
             q-btn.ml-4(label="Thêm chi tiết đề thi" color="primary" @click="isExamDetailActive = !isExamDetailActive")
 
     q-card-section
@@ -126,6 +130,7 @@ q-dialog(v-model="isTestActive" full-width)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 
   exam-detail-dialog
+  add-subject-dialog
 </template>
 
 <style scoped lang="sass">

@@ -1,5 +1,10 @@
 <script setup>
+import { useAuthStore } from 'stores/auth'
+const authStore = useAuthStore()
 
+const logout = () => {
+  authStore.logout()
+}
 </script>
 
 <template lang="pug">
@@ -12,5 +17,5 @@
     q-btn(label="Quản lí lớp" size="xl" no-caps color="purple")
   .col-12
     div(class='mt-[200px]')
-      q-btn(label="Đăng xuất" size="xl" no-caps color="red")
+      q-btn(label="Đăng xuất" size="xl" no-caps color="red"  @click="logout")
 </template>

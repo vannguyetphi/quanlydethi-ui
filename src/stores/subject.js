@@ -15,6 +15,9 @@ export const useSubjectStore = defineStore('subject', {
     },
     async addSubjectToExam(payload) {
       const res = await api.post('/subjects/addToExam', payload)
+    },
+    async addSubject(payload) {
+      const res = await api.post('/subjects', payload)
     }
   },
 });
