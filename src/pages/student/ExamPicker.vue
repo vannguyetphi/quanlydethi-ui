@@ -16,7 +16,7 @@ const fetchExams = async () => {
 }
 
 const cardClick = (examId) => {
-  router.push({ name: 'StudentExamStart', params: { examId } })
+  router.push({ name: 'StudentExamWelcome', params: { examId } })
 }
 
 onMounted(async () => {

@@ -5,7 +5,8 @@ import { Notify } from 'quasar'
 export const useQuestionStore = defineStore('question', {
   state: () => ({
     questions: [],
-    questionDetails: []
+    questionDetails: [],
+    examSubjectQuestions: []
   }),
   getters: {
     questionTransform: (state) => {
@@ -18,6 +19,11 @@ export const useQuestionStore = defineStore('question', {
         else data[qD.subjectId].push(qD)
       })
       return data
+    },
+    studentAnswers: (state) => {
+     return state.examSubjectQuestions.map(q => {
+       return { examId: q.examId, subjectId: q.subjectId, questionId: q.questionId, answer: [] }
+     })
     }
   },
   actions: {
@@ -47,6 +53,10 @@ export const useQuestionStore = defineStore('question', {
     async getExamQuestions({ examId }) {
       const res = await api.get('/questionDetails/getQuestionDetails', { params: { examId } })
       this.questionDetails = res.data.data
+    },
+    async getExamSubjectQuestions({ examId, subjectId }) {
+      const res = await api.get('/questionDetails/getExamSubjectQuestions', { params: { examId, subjectId } })
+      this.examSubjectQuestions = res.data.data
     }
   },
 });

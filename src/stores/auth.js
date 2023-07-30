@@ -2,8 +2,6 @@ import { defineStore } from 'pinia';
 import {api} from "boot/axios";
 import { Notify } from 'quasar'
 
-import route from '../router'
-
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: JSON.parse(localStorage.getItem('user')) || null,

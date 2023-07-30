@@ -3,6 +3,7 @@ import {api} from "boot/axios";
 
 export const useExamStore = defineStore('exam', {
   state: () => ({
+    exam: null,
     exams: [],
     examSubjects: []
   }),
@@ -10,6 +11,10 @@ export const useExamStore = defineStore('exam', {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
   },
   actions: {
+    async getExam(id) {
+      const res = await api.get(`/lessons/${id}`);
+      this.exam = res.data.data
+    },
     async getExams() {
       const res = await api.get('/lessons');
       this.exams = res.data

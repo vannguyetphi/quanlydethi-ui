@@ -20,25 +20,6 @@ const routes = [
     ],
   },
   {
-    path: '/hocvien',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '',
-        component: () => import('pages/MainPage.vue'),
-        meta: {
-          requiresAuth: true
-        }
-      },
-      { path: 'test-management',
-        component: () => import('pages/TestManagement.vue'),
-        name: 'TestPage',
-        meta: {
-          requiresAuth: true
-        }
-      }
-    ],
-  },
-  {
     path: '/hocvien/dangnhap',
     component: () => import('pages/student/LoginPage.vue'),
     name: 'StudentLoginPage'
@@ -50,8 +31,19 @@ const routes = [
   },
   {
     path: '/hocvien/kiem-tra/:examId',
-    component: () => import('pages/student/ExamStart.vue'),
-    name: 'StudentExamStart'
+    component: () => import('layouts/ExamStartLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/student/ExamWelcome.vue'),
+        name: 'StudentExamWelcome'
+      },
+      {
+        path: ':subject',
+        component: () => import('pages/student/ExamStart.vue'),
+        name: 'StudentExamStart'
+      }
+    ],
   },
   {
     path: '/login',
