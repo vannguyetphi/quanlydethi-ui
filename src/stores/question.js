@@ -19,11 +19,6 @@ export const useQuestionStore = defineStore('question', {
         else data[qD.subjectId].push(qD)
       })
       return data
-    },
-    studentAnswers: (state) => {
-     return state.examSubjectQuestions.map(q => {
-       return { examId: q.examId, subjectId: q.subjectId, questionId: q.questionId, answer: [] }
-     })
     }
   },
   actions: {
