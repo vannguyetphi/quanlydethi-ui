@@ -10,6 +10,7 @@ const questionStore = useQuestionStore()
 const questions = storeToRefs(questionStore).examSubjectQuestions
 const studentAnswers = ref([])
 const loading = ref(false)
+const confirmDialog = ref(null)
 const generateStudentAnswerHolder = () => {
   studentAnswers.value = questions.value.map(q => {
     return {
@@ -35,7 +36,9 @@ onMounted(async () => {
   loading.value = false
   generateStudentAnswerHolder()
 })
-const a = ref(true)
+const confirm = () => {
+  console.log(studentAnswers.value)
+}
 </script>
 
 <template lang="pug">
@@ -75,10 +78,14 @@ div
           q-checkbox(v-model='studentAnswers[i].answer.d')
 
 
-  .text-right.mt-5(v-if="questions.length > 0 && !loading")
-    q-btn(label="Nộp bài" color="primary" :disable="!canSubmit()")
+  .text-right.mt-5(v-if="(questions && questions.length > 0 ) && !loading")
+    q-btn(label="Nộp bài" color="primary" :disable="!canSubmit()" @click="confirmDialog.open()")
 
-  confirm-dialog
+  confirm-dialog(
+    :title="'Xác nhận nộp bài?'"
+    @confirm='confirm'
+    ref="confirmDialog"
+  )
 </template>
 
 <style scoped lang="sass">

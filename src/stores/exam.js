@@ -5,12 +5,25 @@ export const useExamStore = defineStore('exam', {
   state: () => ({
     exam: null,
     exams: [],
-    examSubjects: []
+    examSubjects: [],
   }),
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
+    examState: (state) => {
+      const obj = {}
+      state.examSubjects.forEach(xs => {
+        if (!obj[xs.code]) obj[xs.code] = {}
+        obj[xs.code].active = true
+      })
+      return obj
+    }
   },
   actions: {
+    setExamState(subjectId) {
+      Object.keys(this.examState).forEach(exs => {
+        this.examState[exs].active = exs === subjectId;
+      })
+    },
     async getExam(id) {
       const res = await api.get(`/lessons/${id}`);
       this.exam = res.data.data

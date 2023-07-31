@@ -12,11 +12,13 @@ const examStore = useExamStore()
 const questionStore = useQuestionStore()
 const exam = storeToRefs(examStore).exam
 const examSubjects = storeToRefs(examStore).examSubjects
+const examState = storeToRefs(examStore).examState
 const drawer = ref(false)
 const examId = route.params.examId || ''
 const loading = ref(false)
-const pickSubject = (id) => {
-  router.push({ name: 'StudentExamStart', params: { subject: id } })
+const pickSubject = (subject) => {
+  examStore.setExamState(subject.code)
+  router.push({ name: 'StudentExamStart', params: { subject: subject.id } })
 }
 onMounted(async () => {
   loading.value = true
@@ -42,8 +44,9 @@ q-layout.shadow-2.rounded-borders.h-screen(view='lHh Lpr lff' container)
           clickable
           v-ripple
           v-for="exSub in examSubjects" :key="exSub.id"
-          @click="pickSubject(exSub.id)"
+          @click="pickSubject(exSub)"
           :class="{'bg-secondary text-white': +$route.params.subject === exSub.id}"
+          :disable="!examState[exSub.code].active"
         )
           q-item-section.text-h6  {{ exSub.name }}
     q-img.absolute-top(src='~assets/bg.jpg' style='height: 150px')
