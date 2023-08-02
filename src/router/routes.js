@@ -16,6 +16,13 @@ const routes = [
         meta: {
           requiresAuth: true
         }
+      },
+      { path: 'quan-li-lop',
+        component: () => import('pages/ClassPage.vue'),
+        name: 'ClassPage',
+        meta: {
+          requiresAuth: true
+        }
       }
     ],
   },

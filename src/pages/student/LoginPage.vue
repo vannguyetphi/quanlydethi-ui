@@ -1,30 +1,20 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useStudentStore } from 'stores/student'
+import { useClassroomStore } from 'stores/classroom'
 import {Notify} from "quasar";
 
 const router = useRouter()
 const studentStore = useStudentStore()
+const classroomStore = useClassroomStore()
+const classrooms = storeToRefs(classroomStore).classroomOpt
 const student = reactive({
   fullName: '',
   candidateNumber: '',
   classId: ''
 })
-const classList = [
-  {
-    label: 'BTR 60PB',
-    value: 'btr60pb'
-  },
-  {
-    label: 'BTR DM2',
-    value: 'btrdm2'
-  },
-  {
-    label: 'BTR 152',
-    value: 'btr152'
-  }
-]
 const loading = ref(false)
 const register = async () => {
   loading.value = true
@@ -38,6 +28,9 @@ const register = async () => {
   })
   loading.value = false
 }
+onMounted(async () => {
+  await classroomStore.fetchClassrooms()
+})
 </script>
 
 <template lang="pug">
@@ -55,7 +48,7 @@ q-layout
               q-form.mt-5
                 q-input.mt-5(label="Họ và tên" outlined v-model="student.fullName")
                 q-input.mt-5(label="Số báo danh" outlined v-model="student.candidateNumber")
-                q-select.mt-5(label="Lớp" outlined :options='classList' v-model="student.classId")
+                q-select.mt-5(label="Lớp" outlined :options='classrooms' v-model="student.classId")
                 q-btn.w-full.mt-5(
                   label="Đăng nhập"
                   color="primary"

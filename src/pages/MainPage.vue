@@ -14,7 +14,7 @@ const logout = () => {
   .col-4
     q-btn(label="Quản lí kết quả thi" size="xl" no-caps color="purple")
   .col-4
-    q-btn(label="Quản lí lớp" size="xl" no-caps color="purple")
+    q-btn(label="Quản lí lớp" size="xl" no-caps color="purple" :to='{ name: "ClassPage" }')
   .col-12
     div(class='mt-[200px]')
       q-btn(label="Đăng xuất" size="xl" no-caps color="red"  @click="logout")

@@ -4,11 +4,14 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { useExamStore } from 'stores/exam'
+import { useStudentStore } from 'stores/student'
 import { useQuestionStore } from 'stores/question'
 
 const route = useRoute()
 const router = useRouter()
 const examStore = useExamStore()
+const studentStore = useStudentStore()
+const student = storeToRefs(studentStore).student
 const questionStore = useQuestionStore()
 const exam = storeToRefs(examStore).exam
 const examSubjects = storeToRefs(examStore).examSubjects
@@ -52,11 +55,11 @@ q-layout.shadow-2.rounded-borders.h-screen(view='lHh Lpr lff' container)
     q-img.absolute-top(src='~assets/bg.jpg' style='height: 150px')
       .absolute-bottom.bg-transparent
         div
-          q-chip(color="secondary" text-color="white") SBD: 3507
+          q-chip(color="secondary" text-color="white") SBD: {{ student.candidateNumber }}
         div
-          q-chip(color="secondary" text-color="white") Lớp: BTR 152
+          q-chip(color="secondary" text-color="white") Lớp: {{ student.candidateNumber }}
         div
-          q-chip(color="secondary" text-color="white") Tên: Đặng Thái Vũ Minh Châu
+          q-chip(color="secondary" text-color="white") Tên: {{ student.fullName }}
   q-page-container
     q-page(padding)
       .flex.items-center.justify-end(v-if="exam")
