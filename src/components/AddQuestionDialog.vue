@@ -1,5 +1,6 @@
 <script setup>
 import { ref, inject,  reactive } from 'vue'
+import { Notify } from 'quasar'
 import { useQuestionStore } from "stores/question";
 
 const questionStore = useQuestionStore()
@@ -35,7 +36,19 @@ const questionObj = reactive({
   answer: '',
   img: ''
 })
+const loading = ref(false)
+const validInputs= () => {
+  return questionObj.title &&
+    questionObj.content &&
+    questionObj.type &&
+    questionObj.A &&
+    questionObj.B &&
+    questionObj.C &&
+    questionObj.D &&
+    model.value.join(',')
+}
 const newQuestion = async () => {
+  loading.value = true
   questionObj.answer = model.value.join(',')
   questionObj.type = questionObj.type.value
   await questionStore.newQuestion(questionObj)
@@ -50,6 +63,13 @@ const newQuestion = async () => {
   questionObj.D = ''
   questionObj.answer = ''
   questionObj.img = ''
+  loading.value = false
+
+  Notify.create({
+    type: 'positive',
+    position: 'top',
+    message: 'Thêm câu hỏi thành công'
+  })
 }
 </script>
 
@@ -99,9 +119,11 @@ q-dialog(v-model="isActive" full-width)
             q-input(label="C" type="textarea" outlined v-model="questionObj.C" )
           .col-6
             q-input(label="D" type="textarea" outlined v-model="questionObj.D" )
+          .col-12.text-right
+            q-btn(label="Thêm" color="primary"  @click="newQuestion" :disable="!validInputs() || loading" :loading="loading")
     q-card-actions.justify-end
       q-btn(flat label="Đóng" color="red" v-close-popup)
-      q-btn(flat label="Xác nhận" color="primary" v-close-popup @click="newQuestion")
+      q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 </template>
 
 <style scoped lang="sass">

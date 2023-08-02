@@ -1,11 +1,43 @@
 <script setup>
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStudentStore } from 'stores/student'
+import {Notify} from "quasar";
 
+const router = useRouter()
+const studentStore = useStudentStore()
 const student = reactive({
   fullName: '',
-  idNumber: '',
-  class: ''
+  candidateNumber: '',
+  classId: ''
 })
+const classList = [
+  {
+    label: 'BTR 60PB',
+    value: 'btr60pb'
+  },
+  {
+    label: 'BTR DM2',
+    value: 'btrdm2'
+  },
+  {
+    label: 'BTR 152',
+    value: 'btr152'
+  }
+]
+const loading = ref(false)
+const register = async () => {
+  loading.value = true
+  student.classId = student.classId.value
+  await studentStore.register(student)
+  router.push({ name: 'StudentExamPicker' })
+  Notify.create({
+    type: 'positive',
+    position: 'top',
+    message: 'Đăng nhập thành công'
+  })
+  loading.value = false
+}
 </script>
 
 <template lang="pug">
@@ -22,15 +54,15 @@ q-layout
                 .text-h6.ml-4 Trường hạ sĩ quan xe tăng 1
               q-form.mt-5
                 q-input.mt-5(label="Họ và tên" outlined v-model="student.fullName")
-                q-input.mt-5(label="Số báo danh" outlined v-model="student.idNumber")
-                q-select.mt-5(label="Lớp" outlined v-model="student.class")
+                q-input.mt-5(label="Số báo danh" outlined v-model="student.candidateNumber")
+                q-select.mt-5(label="Lớp" outlined :options='classList' v-model="student.classId")
                 q-btn.w-full.mt-5(
                   label="Đăng nhập"
                   color="primary"
                   size="lg"
                   :loading="loading"
                   :disable="loading"
-                  @click="auth"
+                  @click="register"
                 )
                 q-btn.w-full.mt-5(
                   label="Giáo viên"

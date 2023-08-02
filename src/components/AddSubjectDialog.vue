@@ -19,6 +19,7 @@ const addNewSubject = async () => {
   subject.code = ''
   Notify.create({
     type: 'positive',
+    position: 'top',
     message: 'Thêm môn học thành công'
   })
 }
