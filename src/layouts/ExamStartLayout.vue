@@ -1,14 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { useExamStore } from 'stores/exam'
 import { useStudentStore } from 'stores/student'
 import { useQuestionStore } from 'stores/question'
+import useTimers from 'src/composables/useTimer'
 
 const route = useRoute()
 const router = useRouter()
+const timers = useTimers()
 const examStore = useExamStore()
 const studentStore = useStudentStore()
 const student = storeToRefs(studentStore).student
@@ -22,11 +24,17 @@ const loading = ref(false)
 const pickSubject = (subject) => {
   examStore.setExamState(subject.code)
   router.push({ name: 'StudentExamStart', params: { subject: subject.id } })
+  timers.addTimer({ minutes: +exam.value.answerTime * 60 })
 }
 onMounted(async () => {
   loading.value = true
   await Promise.all([examStore.getExam(examId), examStore.getExamSubjects({ examId })])
+  timers.countdown.value = exam.value.answerTime + ': 00'
   loading.value = false
+})
+onUnmounted(() => {
+  timers.countdown.value = exam.value.answerTime + ': 00'
+  timers.clearTimer()
 })
 </script>
 
@@ -52,18 +60,25 @@ q-layout.shadow-2.rounded-borders.h-screen(view='lHh Lpr lff' container)
           :disable="!examState[exSub.code].active"
         )
           q-item-section.text-h6  {{ exSub.name }}
+        q-item(
+          clickable
+          v-ripple
+          @click="$router.push({ name: 'StudentExamPicker' })"
+        )
+          q-item-section.text-negative.text-h6  Quay lại
+          q-icon(name="chevron_left" size="40px" color="negative")
     q-img.absolute-top(src='~assets/bg.jpg' style='height: 150px')
       .absolute-bottom.bg-transparent
         div
           q-chip(color="secondary" text-color="white") SBD: {{ student.candidateNumber }}
         div
-          q-chip(color="secondary" text-color="white") Lớp: {{ student.candidateNumber }}
+          q-chip(color="secondary" text-color="white") Lớp: {{ student.className }}
         div
           q-chip(color="secondary" text-color="white") Tên: {{ student.fullName }}
   q-page-container
     q-page(padding)
       .flex.items-center.justify-end(v-if="exam")
-        .text-h6.mr-4 {{ exam.answerTime }} : 00
+        .text-h6.mr-4 {{ timers.countdown }}
         q-icon(name="o_timer" size="xl" color="primary")
       router-view
 

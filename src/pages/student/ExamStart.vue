@@ -53,28 +53,28 @@ div
         q-item-section
           q-item-label
             .text-lg A: {{ q.A }}
-        q-item-section(avatar top)
+        q-item-section(avatar top v-if="studentAnswers[i]")
           q-checkbox(v-model='studentAnswers[i].answer.a')
 
       q-item(tag='label' v-ripple)
         q-item-section
           q-item-label
             .text-lg B: {{ q.B }}
-        q-item-section(avatar top)
+        q-item-section(avatar top v-if="studentAnswers[i]")
           q-checkbox(v-model='studentAnswers[i].answer.b')
 
       q-item(tag='label' v-ripple)
         q-item-section
           q-item-label
             .text-lg C: {{ q.C }}
-        q-item-section(avatar top)
+        q-item-section(avatar top v-if="studentAnswers[i]")
           q-checkbox(v-model='studentAnswers[i].answer.c')
 
       q-item(tag='label' v-ripple)
         q-item-section
           q-item-label
             .text-lg D: {{ q.D }}
-        q-item-section(avatar top)
+        q-item-section(avatar top v-if="studentAnswers[i]")
           q-checkbox(v-model='studentAnswers[i].answer.d')
 
 

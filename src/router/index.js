@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
 import { useAuthStore } from 'stores/auth'
+import { useStudentStore } from 'stores/student'
 
 /*
  * If not building with SSR mode, you can
@@ -28,11 +29,21 @@ export default route(function (/* { store, ssrContext } */) {
   })
 
   const authStore = useAuthStore()
+  const studentStore = useStudentStore()
   Router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth) && !authStore.isAuthenticated) {
       return next({ name: 'LoginPage' })
     } else {
       if (to.name === 'LoginPage' && authStore.isAuthenticated) return next(from.fullPath)
+      return next()
+    }
+  })
+
+  Router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.isCandidate) && !studentStore.student) {
+      return next({ name: 'StudentLoginPage' })
+    } else {
+      if (to.name === 'StudentLoginPage' && studentStore.student) return next(from.fullPath)
       return next()
     }
   })

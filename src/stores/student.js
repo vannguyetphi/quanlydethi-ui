@@ -10,8 +10,11 @@ export const useStudentStore = defineStore('student', {
   actions: {
     async register(payload) {
       const res = await api.post(`/students`, payload);
-      this.student = res.data.data
-      localStorage.setItem('student', JSON.stringify(this.student))
+      let student = res.data.data
+      const resStudent = await api.get(`/students/${student.id}`);
+      student = resStudent.data.data
+      this.student = student
+      localStorage.setItem('student', JSON.stringify(student))
     },
     async logout() {
       localStorage.removeItem('student')

@@ -34,7 +34,10 @@ const routes = [
   {
     path: '/hocvien/chon-de-thi',
     component: () => import('pages/student/ExamPicker.vue'),
-    name: 'StudentExamPicker'
+    name: 'StudentExamPicker',
+    meta: {
+      isCandidate: true
+    }
   },
   {
     path: '/hocvien/kiem-tra/:examId',
@@ -51,6 +54,9 @@ const routes = [
         name: 'StudentExamStart'
       }
     ],
+    meta: {
+      isCandidate: true
+    }
   },
   {
     path: '/login',
