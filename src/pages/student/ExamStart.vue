@@ -1,12 +1,19 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useExamStore } from 'stores/exam'
 import { useQuestionStore } from 'stores/question'
+import { useStudentStore } from 'stores/student'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import ConfirmDialog from "components/dialog/ConfirmDialog.vue";
+import {Notify} from "quasar";
 
 const route = useRoute()
+const router = useRouter()
+const examStore = useExamStore()
 const questionStore = useQuestionStore()
+const studentStore = useStudentStore()
 const questions = storeToRefs(questionStore).examSubjectQuestions
 const studentAnswers = ref([])
 const loading = ref(false)
@@ -16,6 +23,7 @@ const generateStudentAnswerHolder = () => {
     return {
       examId: q.examId,
       subjectId: q.subjectId,
+      subjectCode: q.code,
       questionId: q.questionId,
       answer: { a: false, b: false, c: false, d: false }
     }
@@ -36,8 +44,39 @@ onMounted(async () => {
   loading.value = false
   generateStudentAnswerHolder()
 })
-const confirm = () => {
-  console.log(studentAnswers.value)
+const submitting = ref(false)
+const confirm = async () => {
+  confirmDialog.value.loading = true
+
+  const promises = studentAnswers.value.map(sa => {
+    const obj = {
+      examId: sa.examId,
+      subjectId: sa.subjectId,
+      questionId: sa.questionId,
+      studentId: studentStore.student.id,
+      answer: Object.keys(sa.answer).map(k => {
+        if (sa.answer[k]) return k
+        return 'NA'
+      }).filter(a => a !== 'NA').join(',')
+    }
+
+    return studentStore.submitAnswers(obj)
+  })
+  await Promise.all(promises)
+
+  confirmDialog.value.loading = false
+  confirmDialog.value.close()
+
+  Notify.create({
+    type: 'positive',
+    position: 'top',
+    message: 'Nộp bài thành công'
+  })
+  examStore.setExamSubjectDone(studentAnswers.value[0].subjectCode)
+  examStore.markExamState()
+
+  const v = route.params
+  router.push({ name: 'StudentExamWelcome', params: { subject: v.subject } })
 }
 </script>
 
@@ -79,7 +118,12 @@ div
 
 
   .text-right.mt-5(v-if="(questions && questions.length > 0 ) && !loading")
-    q-btn(label="Nộp bài" color="primary" :disable="!canSubmit()" @click="confirmDialog.open()")
+    q-btn(
+      label="Nộp bài"
+      color="primary"
+      :disable="!canSubmit()"
+      @click="confirmDialog.open()"
+    )
 
   confirm-dialog(
     :title="'Xác nhận nộp bài?'"

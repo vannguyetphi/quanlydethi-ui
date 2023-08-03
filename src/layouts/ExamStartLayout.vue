@@ -24,7 +24,7 @@ const loading = ref(false)
 const pickSubject = (subject) => {
   examStore.setExamState(subject.code)
   router.push({ name: 'StudentExamStart', params: { subject: subject.id } })
-  timers.addTimer({ minutes: +exam.value.answerTime * 60 })
+  if (examStore.examSubjectDone.length === 0) timers.addTimer({ minutes: +exam.value.answerTime * 60 })
 }
 onMounted(async () => {
   loading.value = true

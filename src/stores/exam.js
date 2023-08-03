@@ -6,6 +6,7 @@ export const useExamStore = defineStore('exam', {
     exam: null,
     exams: [],
     examSubjects: [],
+    examSubjectDone: [],
   }),
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
@@ -23,6 +24,14 @@ export const useExamStore = defineStore('exam', {
       Object.keys(this.examState).forEach(exs => {
         this.examState[exs].active = exs === subjectId;
       })
+    },
+    markExamState() {
+      Object.keys(this.examState).forEach(exs => {
+        this.examState[exs].active = !this.examSubjectDone.includes(exs);
+      })
+    },
+    setExamSubjectDone(payload) {
+      this.examSubjectDone.push(payload)
     },
     async getExam(id) {
       const res = await api.get(`/lessons/${id}`);

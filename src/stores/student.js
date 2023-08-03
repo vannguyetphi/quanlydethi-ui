@@ -8,6 +8,9 @@ export const useStudentStore = defineStore('student', {
   getters: {
   },
   actions: {
+    async submitAnswers(payload) {
+      await api.post('/answerDetails', payload)
+    },
     async register(payload) {
       const res = await api.post(`/students`, payload);
       let student = res.data.data
