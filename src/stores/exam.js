@@ -7,6 +7,7 @@ export const useExamStore = defineStore('exam', {
     exams: [],
     examSubjects: [],
     examSubjectDone: [],
+    examExpired: []
   }),
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
@@ -29,6 +30,9 @@ export const useExamStore = defineStore('exam', {
       Object.keys(this.examState).forEach(exs => {
         this.examState[exs].active = !this.examSubjectDone.includes(exs);
       })
+    },
+    addExpiredExam(id) {
+      this.examExpired.push(id)
     },
     setExamSubjectDone(payload) {
       this.examSubjectDone.push(payload)

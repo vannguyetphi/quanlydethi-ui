@@ -15,6 +15,9 @@ const examStore = useExamStore()
 const questionStore = useQuestionStore()
 const studentStore = useStudentStore()
 const questions = storeToRefs(questionStore).examSubjectQuestions
+const examSubjectDone = storeToRefs(examStore).examSubjectDone
+const examSubjects = storeToRefs(examStore).examSubjects
+const exam = storeToRefs(examStore).exam
 const studentAnswers = ref([])
 const loading = ref(false)
 const confirmDialog = ref(null)
@@ -76,7 +79,19 @@ const confirm = async () => {
   examStore.markExamState()
 
   const v = route.params
-  router.push({ name: 'StudentExamWelcome', params: { subject: v.subject } })
+  const isAllDone = () => {
+    return examSubjects.value.every(es => examSubjectDone.value.includes(es.code))
+  }
+  if (isAllDone()) {
+    Notify.create({
+      type: 'positive',
+      position: 'top',
+      message: `Bạn đã hoàn thành bài thi ${exam.value.lessonName}`,
+      timeout: 7000,
+    })
+    examStore.addExpiredExam(exam.value.id)
+    router.push({ name: 'StudentExamPicker' })
+  } else router.push({ name: 'StudentExamWelcome', params: { subject: v.subject } })
 }
 </script>
 

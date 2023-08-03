@@ -7,6 +7,7 @@ import { useExamStore } from "stores/exam";
 const examStore = useExamStore()
 const router = useRouter()
 const exams = storeToRefs(examStore).exams
+const examExpiredList = storeToRefs(examStore).examExpired
 
 const spinner = ref(false)
 const fetchExams = async () => {
@@ -14,8 +15,8 @@ const fetchExams = async () => {
   await examStore.getExams()
   spinner.value = false
 }
-
 const cardClick = (examId) => {
+  if (examExpiredList.value.includes(examId)) return
   router.push({ name: 'StudentExamWelcome', params: { examId } })
 }
 
@@ -45,12 +46,16 @@ q-layout
             v-ripple
             class="hover:bg-[#00D167] hover:text-white"
             @click="cardClick(exam.id)"
+            :class="{'opacity-50 disabled': examExpiredList.includes(exam.id)}"
           )
             q-card-section.items-center.justify-center.flex.flex-col.h-full
               .text-h6 {{ exam.lessonName }}
               .text-h6.flex.items-center
                 q-icon(name="o_timer" color="primary")
                 span.ml-2 {{ exam.answerTime }} phút
+
+      .mt-12
+        q-btn(label="Xem kết quả thi" color="secondary" size="lg" :to="{name: 'StudentExamResult'}")
 </template>
 
 <style scoped lang="sass">

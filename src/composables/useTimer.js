@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 const countdown = ref('')
+const isTimeout = ref(false)
 let intervalId
 const addTimer = ({ minutes }) => {
   let timer = minutes
@@ -14,6 +15,7 @@ const addTimer = ({ minutes }) => {
     if (--timer < 0) {
       timer = 0;
       clearInterval(intervalId)
+      isTimeout.value = true
     }
   }, 1000);
 }
@@ -24,5 +26,5 @@ const clearTimer = () => {
 
 
 export default function useTimers () {
-  return { addTimer, clearTimer, countdown }
+  return { addTimer, clearTimer, countdown, isTimeout }
 }

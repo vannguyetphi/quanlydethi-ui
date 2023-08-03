@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
@@ -7,6 +7,7 @@ import { useExamStore } from 'stores/exam'
 import { useStudentStore } from 'stores/student'
 import { useQuestionStore } from 'stores/question'
 import useTimers from 'src/composables/useTimer'
+import ExamExpired from "components/dialog/ExamExpired.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -21,6 +22,8 @@ const examState = storeToRefs(examStore).examState
 const drawer = ref(false)
 const examId = route.params.examId || ''
 const loading = ref(false)
+const examExpired = ref(null)
+const examExpiredTimeout = ref(null)
 const pickSubject = (subject) => {
   examStore.setExamState(subject.code)
   router.push({ name: 'StudentExamStart', params: { subject: subject.id } })
@@ -35,6 +38,15 @@ onMounted(async () => {
 onUnmounted(() => {
   timers.countdown.value = exam.value.answerTime + ': 00'
   timers.clearTimer()
+})
+watch(() => timers.isTimeout.value, () => {
+  examExpired.value.dialog.open()
+  examStore.addExpiredExam(exam.value.id)
+  timers.isTimeout.value = false
+  examExpiredTimeout.value = setTimeout(() => {
+    examExpired.value.dialog.close()
+    router.push({ name: 'StudentExamPicker' })
+  }, 3000)
 })
 </script>
 
@@ -82,6 +94,7 @@ q-layout.shadow-2.rounded-borders.h-screen(view='lHh Lpr lff' container)
         q-icon(name="o_timer" size="xl" color="primary")
       router-view
 
+  exam-expired(ref="examExpired")
 </template>
 
 <style scoped lang="sass">
