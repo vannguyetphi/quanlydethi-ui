@@ -41,11 +41,17 @@ const routes = [
   },
   {
     path: '/hocvien/ket-qua-kiem-tra',
-    component: () => import('pages/student/ExamResult.vue'),
-    name: 'StudentExamResult',
-    meta: {
-      isCandidate: true
-    }
+    component: () => import('layouts/ExamResultLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/student/ExamResult.vue'),
+        name: 'StudentExamResult',
+        meta: {
+          isCandidate: true
+        }
+      },
+    ]
   },
   {
     path: '/hocvien/kiem-tra/:examId',

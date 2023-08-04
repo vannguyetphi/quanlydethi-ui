@@ -7,7 +7,8 @@ export const useExamStore = defineStore('exam', {
     exams: [],
     examSubjects: [],
     examSubjectDone: [],
-    examExpired: []
+    examExpired: [],
+    examResults: [],
   }),
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
@@ -48,6 +49,11 @@ export const useExamStore = defineStore('exam', {
     async getExamSubjects(payload) {
       const res = await api.get('/exams/getSubjects', { params: payload })
       this.examSubjects = res.data.data
+    },
+    async getExamResults(payload) {
+      const res = await api.get('/answerDetails/getStudentResult', { params: payload })
+      this.examResults = res.data.data
+      console.log(this.examResults)
     }
   },
 });
