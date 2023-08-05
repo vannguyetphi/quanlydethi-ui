@@ -51,6 +51,14 @@ const routes = [
           isCandidate: true
         }
       },
+      {
+        path: ':examId',
+        component: () => import('pages/student/ExamResultView.vue'),
+        name: 'ExamResultView',
+        meta: {
+          isCandidate: true
+        }
+      },
     ]
   },
   {

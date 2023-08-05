@@ -9,6 +9,10 @@ export const useExamStore = defineStore('exam', {
     examSubjectDone: [],
     examExpired: [],
     examResults: [],
+    examSingleResult: [],
+    loader: {
+      results: false
+    }
   }),
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
@@ -19,6 +23,12 @@ export const useExamStore = defineStore('exam', {
         obj[xs.code].active = true
       })
       return obj
+    },
+    groupResult: (state) => {
+      return state.examSingleResult.reduce((groups, item) => ({
+        ...groups,
+        [item.subjectName]: [...(groups[item.subjectName] || []), item]
+      }), {});
     }
   },
   actions: {
@@ -38,6 +48,9 @@ export const useExamStore = defineStore('exam', {
     setExamSubjectDone(payload) {
       this.examSubjectDone.push(payload)
     },
+    setSingleResult(examId) {
+      this.examSingleResult = this.examResults[examId]
+    },
     async getExam(id) {
       const res = await api.get(`/lessons/${id}`);
       this.exam = res.data.data
@@ -51,9 +64,10 @@ export const useExamStore = defineStore('exam', {
       this.examSubjects = res.data.data
     },
     async getExamResults(payload) {
+      this.loader.results = true
       const res = await api.get('/answerDetails/getStudentResult', { params: payload })
       this.examResults = res.data.data
-      console.log(this.examResults)
+      this.loader.results = false
     }
   },
 });
