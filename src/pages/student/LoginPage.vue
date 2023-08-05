@@ -1,36 +1,36 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useStudentStore } from 'stores/student'
-import { useClassroomStore } from 'stores/classroom'
-import {Notify} from "quasar";
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useStudentStore } from "stores/student";
+import { useClassroomStore } from "stores/classroom";
+import { Notify } from "quasar";
 
-const router = useRouter()
-const studentStore = useStudentStore()
-const classroomStore = useClassroomStore()
-const classrooms = storeToRefs(classroomStore).classroomOpt
+const router = useRouter();
+const studentStore = useStudentStore();
+const classroomStore = useClassroomStore();
+const classrooms = storeToRefs(classroomStore).classroomOpt;
 const student = reactive({
-  fullName: '',
-  candidateNumber: '',
-  classId: ''
-})
-const loading = ref(false)
+  fullName: "",
+  candidateNumber: "",
+  classId: "",
+});
+const loading = ref(false);
 const register = async () => {
-  loading.value = true
-  student.classId = student.classId.value
-  await studentStore.register(student)
-  router.push({ name: 'StudentExamPicker' })
+  loading.value = true;
+  student.classId = student.classId.value;
+  await studentStore.register(student);
+  router.push({ name: "StudentExamPicker" });
   Notify.create({
-    type: 'positive',
-    position: 'top',
-    message: 'Đăng nhập thành công'
-  })
-  loading.value = false
-}
+    type: "positive",
+    position: "top",
+    message: "Đăng nhập thành công",
+  });
+  loading.value = false;
+};
 onMounted(async () => {
-  await classroomStore.fetchClassrooms()
-})
+  await classroomStore.fetchClassrooms();
+});
 </script>
 
 <template lang="pug">

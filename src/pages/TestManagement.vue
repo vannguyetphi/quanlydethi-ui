@@ -1,72 +1,70 @@
 <script setup>
-import { ref, provide, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, provide, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { useExamStore } from "stores/exam";
 import { useSubjectStore } from "stores/subject";
 import { useQuestionStore } from "stores/question";
-import moment from 'moment'
+import moment from "moment";
 import AddTestDialog from "components/AddTestDialog.vue";
 import AddQuestionDialog from "components/AddQuestionDialog.vue";
 import ExamViewDialog from "components/ExamViewDialog.vue";
 
-const examStore = useExamStore()
-const subjectStore = useSubjectStore()
-const questionStore = useQuestionStore()
-const lessons = storeToRefs(examStore).exams
-const examInfo = ref({})
-const openTestDialog = ref(false)
-const openQuestionDialog = ref(false)
-const detailView = ref(false)
+const examStore = useExamStore();
+const subjectStore = useSubjectStore();
+const questionStore = useQuestionStore();
+const lessons = storeToRefs(examStore).exams;
+const examInfo = ref({});
+const openTestDialog = ref(false);
+const openQuestionDialog = ref(false);
+const detailView = ref(false);
 const columns = [
   {
-    name: 'name',
+    name: "name",
     required: true,
-    label: 'ID',
-    align: 'left',
-    field: row => row.id,
-    sortable: true
-  },
-  { name: 'lessonName',
-    label: 'Tên',
-    field: 'lessonName',
-    sortable: true
-  },
-  { name: 'name',
-    label: 'Người tạo',
-    field: 'name',
-    sortable: true
-  },
-  { name: 'created_at',
-    label: 'Ngày tạo',
-    field: 'created_at',
+    label: "ID",
+    align: "left",
+    field: (row) => row.id,
     sortable: true,
-    format: val => moment(val).format('MM-DD-YYYY')
   },
-  { name: 'updated_at',
-    label: 'Ngày sửa',
-    field: 'updated_at',
+  { name: "lessonName", label: "Tên", field: "lessonName", sortable: true },
+  { name: "name", label: "Người tạo", field: "name", sortable: true },
+  {
+    name: "created_at",
+    label: "Ngày tạo",
+    field: "created_at",
     sortable: true,
-    format: val => moment(val).format('MM-DD-YYYY')
+    format: (val) => moment(val).format("MM-DD-YYYY"),
   },
-]
+  {
+    name: "updated_at",
+    label: "Ngày sửa",
+    field: "updated_at",
+    sortable: true,
+    format: (val) => moment(val).format("MM-DD-YYYY"),
+  },
+];
 
 const rowClick = async (_, row) => {
-  examInfo.value = row
-  detailView.value = !detailView.value
-  await questionStore.getExamQuestions({ examId: row.id })
-}
+  examInfo.value = row;
+  detailView.value = !detailView.value;
+  await questionStore.getExamQuestions({ examId: row.id });
+};
 
-provide('isTestActive', openTestDialog)
-provide('isQuestionActive', openQuestionDialog)
-provide('detailView', detailView)
-provide('examInfo', examInfo)
+provide("isTestActive", openTestDialog);
+provide("isQuestionActive", openQuestionDialog);
+provide("detailView", detailView);
+provide("examInfo", examInfo);
 
 onMounted(async () => {
-  await Promise.all([examStore.getExams(), subjectStore.getSubjects(), questionStore.getQuestions()])
-})
+  await Promise.all([
+    examStore.getExams(),
+    subjectStore.getSubjects(),
+    questionStore.getQuestions(),
+  ]);
+});
 </script>
 
-<template  lang="pug">
+<template lang="pug">
 .mt-12
   h2.text-center.text-5xl Quản lý đề thi
   .text-right.px-5
@@ -92,6 +90,4 @@ onMounted(async () => {
   exam-view-dialog
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

@@ -1,98 +1,116 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useExamStore } from 'stores/exam'
-import { useQuestionStore } from 'stores/question'
-import { useStudentStore } from 'stores/student'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useExamStore } from "stores/exam";
+import { useQuestionStore } from "stores/question";
+import { useStudentStore } from "stores/student";
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import ConfirmDialog from "components/dialog/ConfirmDialog.vue";
-import {Notify} from "quasar";
+import { Notify } from "quasar";
 
-const route = useRoute()
-const router = useRouter()
-const examStore = useExamStore()
-const questionStore = useQuestionStore()
-const studentStore = useStudentStore()
-const questions = storeToRefs(questionStore).examSubjectQuestions
-const examSubjectDone = storeToRefs(examStore).examSubjectDone
-const examSubjects = storeToRefs(examStore).examSubjects
-const exam = storeToRefs(examStore).exam
-const studentAnswers = ref([])
-const loading = ref(false)
-const confirmDialog = ref(null)
+const route = useRoute();
+const router = useRouter();
+const examStore = useExamStore();
+const questionStore = useQuestionStore();
+const studentStore = useStudentStore();
+const questions = storeToRefs(questionStore).examSubjectQuestions;
+const examSubjectDone = storeToRefs(examStore).examSubjectDone;
+const examSubjects = storeToRefs(examStore).examSubjects;
+const exam = storeToRefs(examStore).exam;
+const studentAnswers = ref([]);
+const loading = ref(false);
+const confirmDialog = ref(null);
 const generateStudentAnswerHolder = () => {
-  studentAnswers.value = questions.value.map(q => {
+  studentAnswers.value = questions.value.map((q) => {
     return {
       examId: q.examId,
       subjectId: q.subjectId,
       subjectCode: q.code,
       questionId: q.questionId,
-      answer: { a: false, b: false, c: false, d: false }
-    }
-  })
-}
-const canSubmit = () => studentAnswers.value.every(sa => sa.answer.a || sa.answer.b || sa.answer.c || sa.answer.d)
+      answer: { a: false, b: false, c: false, d: false },
+    };
+  });
+};
+const canSubmit = () =>
+  studentAnswers.value.every(
+    (sa) => sa.answer.a || sa.answer.b || sa.answer.c || sa.answer.d
+  );
 
-watch(()=> route.params, async (v) => {
-  loading.value = true
-  await questionStore.getExamSubjectQuestions({ examId: +v.examId, subjectId: +v.subject })
-  loading.value = false
-  generateStudentAnswerHolder()
-})
+watch(
+  () => route.params,
+  async (v) => {
+    loading.value = true;
+    await questionStore.getExamSubjectQuestions({
+      examId: +v.examId,
+      subjectId: +v.subject,
+    });
+    loading.value = false;
+    generateStudentAnswerHolder();
+  }
+);
 onMounted(async () => {
-  loading.value = true
-  const v = route.params
-  await questionStore.getExamSubjectQuestions({ examId: +v.examId, subjectId: +v.subject })
-  loading.value = false
-  generateStudentAnswerHolder()
-})
-const submitting = ref(false)
+  loading.value = true;
+  const v = route.params;
+  await questionStore.getExamSubjectQuestions({
+    examId: +v.examId,
+    subjectId: +v.subject,
+  });
+  loading.value = false;
+  generateStudentAnswerHolder();
+});
+const submitting = ref(false);
 const confirm = async () => {
-  confirmDialog.value.loading = true
+  confirmDialog.value.loading = true;
 
-  const promises = studentAnswers.value.map(sa => {
+  const promises = studentAnswers.value.map((sa) => {
     const obj = {
       examId: sa.examId,
       subjectId: sa.subjectId,
       questionId: sa.questionId,
       studentId: studentStore.student.id,
-      answer: Object.keys(sa.answer).map(k => {
-        if (sa.answer[k]) return k
-        return 'NA'
-      }).filter(a => a !== 'NA').join(',')
-    }
+      answer: Object.keys(sa.answer)
+        .map((k) => {
+          if (sa.answer[k]) return k;
+          return "NA";
+        })
+        .filter((a) => a !== "NA")
+        .join(","),
+    };
 
-    return studentStore.submitAnswers(obj)
-  })
-  await Promise.all(promises)
+    return studentStore.submitAnswers(obj);
+  });
+  await Promise.all(promises);
 
-  confirmDialog.value.loading = false
-  confirmDialog.value.close()
+  confirmDialog.value.loading = false;
+  confirmDialog.value.close();
 
   Notify.create({
-    type: 'positive',
-    position: 'top',
-    message: 'Nộp bài thành công'
-  })
-  examStore.setExamSubjectDone(studentAnswers.value[0].subjectCode)
-  examStore.markExamState()
+    type: "positive",
+    position: "top",
+    message: "Nộp bài thành công",
+  });
+  examStore.setExamSubjectDone(studentAnswers.value[0].subjectCode);
+  examStore.markExamState();
 
-  const v = route.params
+  const v = route.params;
   const isAllDone = () => {
-    return examSubjects.value.every(es => examSubjectDone.value.includes(es.code))
-  }
+    return examSubjects.value.every((es) =>
+      examSubjectDone.value.includes(es.code)
+    );
+  };
   if (isAllDone()) {
     Notify.create({
-      type: 'positive',
-      position: 'top',
+      type: "positive",
+      position: "top",
       message: `Bạn đã hoàn thành bài thi ${exam.value.lessonName}`,
       timeout: 7000,
-    })
-    examStore.addExpiredExam(exam.value.id)
-    router.push({ name: 'StudentExamPicker' })
-  } else router.push({ name: 'StudentExamWelcome', params: { subject: v.subject } })
-}
+    });
+    examStore.addExpiredExam(exam.value.id);
+    router.push({ name: "StudentExamPicker" });
+  } else
+    router.push({ name: "StudentExamWelcome", params: { subject: v.subject } });
+};
 </script>
 
 <template lang="pug">
@@ -147,6 +165,4 @@ div
   )
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

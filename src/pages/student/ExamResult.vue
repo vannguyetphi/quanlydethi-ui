@@ -1,12 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useExamStore } from 'stores/exam'
-import { useStudentStore } from 'stores/student'
+import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useExamStore } from "stores/exam";
+import { useStudentStore } from "stores/student";
 
-const examStore = useExamStore()
-const examResults = storeToRefs(examStore).examResults
-const { loader } = storeToRefs(examStore)
+const examStore = useExamStore();
+const examResults = storeToRefs(examStore).examResults;
+const { loader } = storeToRefs(examStore);
 </script>
 
 <template lang="pug">

@@ -1,10 +1,10 @@
 <script setup>
-import { useAuthStore } from 'stores/auth'
-const authStore = useAuthStore()
+import { useAuthStore } from "stores/auth";
+const authStore = useAuthStore();
 
 const logout = () => {
-  authStore.logout()
-}
+  authStore.logout();
+};
 </script>
 
 <template lang="pug">

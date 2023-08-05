@@ -1,29 +1,29 @@
 <script setup>
-import { inject, ref, reactive } from 'vue'
+import { inject, ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
-import { Notify } from 'quasar'
-import { useSubjectStore } from 'stores/subject'
+import { Notify } from "quasar";
+import { useSubjectStore } from "stores/subject";
 
-const subjectStore = useSubjectStore()
+const subjectStore = useSubjectStore();
 const subject = reactive({
-  name: '',
-  code: ''
-})
-const loading = ref(false)
+  name: "",
+  code: "",
+});
+const loading = ref(false);
 const addNewSubject = async () => {
-  loading.value = true
-  await subjectStore.addSubject(subject)
-  await subjectStore.getSubjects()
-  loading.value = false
-  subject.name = ''
-  subject.code = ''
+  loading.value = true;
+  await subjectStore.addSubject(subject);
+  await subjectStore.getSubjects();
+  loading.value = false;
+  subject.name = "";
+  subject.code = "";
   Notify.create({
-    type: 'positive',
-    position: 'top',
-    message: 'Thêm môn học thành công'
-  })
-}
-const isActive = inject('subjectDialog')
+    type: "positive",
+    position: "top",
+    message: "Thêm môn học thành công",
+  });
+};
+const isActive = inject("subjectDialog");
 </script>
 
 <template lang="pug">
@@ -48,6 +48,4 @@ q-dialog(v-model="isActive" full-width)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

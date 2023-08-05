@@ -1,33 +1,33 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { useClassroomStore } from 'stores/classroom'
+import { ref, reactive } from "vue";
+import { useClassroomStore } from "stores/classroom";
 import BaseDialog from "components/dialog/BaseDialog.vue";
-import {Notify} from "quasar";
+import { Notify } from "quasar";
 
-const dialog = ref(null)
-const classroomStore = useClassroomStore()
-const loading = ref(false)
+const dialog = ref(null);
+const classroomStore = useClassroomStore();
+const loading = ref(false);
 const classObj = reactive({
-  name: '',
-  code: ''
-})
+  name: "",
+  code: "",
+});
 const confirm = async () => {
-  loading.value = true
-  await classroomStore.newClassroom(classObj)
-  await classroomStore.fetchClassrooms()
-  loading.value = false
+  loading.value = true;
+  await classroomStore.newClassroom(classObj);
+  await classroomStore.fetchClassrooms();
+  loading.value = false;
 
   Notify.create({
-    type: 'positive',
-    message: 'Thêm lớp mới thành công',
-    position: 'top',
-  })
-  dialog.value.close()
-}
+    type: "positive",
+    message: "Thêm lớp mới thành công",
+    position: "top",
+  });
+  dialog.value.close();
+};
 
 defineExpose({
-  dialog
-})
+  dialog,
+});
 </script>
 
 <template lang="pug">
@@ -41,6 +41,4 @@ base-dialog(:fullWidth="true" :btnState="{ disable: !classObj.name || !classObj.
         q-input(outlined label="Mã lớp" v-model="classObj.code")
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

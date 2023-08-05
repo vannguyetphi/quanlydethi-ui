@@ -1,23 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const confirm = ref(false)
+const confirm = ref(false);
 const close = () => {
-  confirm.value = false
-}
+  confirm.value = false;
+};
 const open = () => {
-  confirm.value = true
-}
-const emit = defineEmits(['confirm'])
-const loading = ref(false)
+  confirm.value = true;
+};
+const emit = defineEmits(["confirm"]);
+const loading = ref(false);
 defineExpose({
   close,
   open,
-  loading
-})
+  loading,
+});
 const props = defineProps({
-  title: String
-})
+  title: String,
+});
 </script>
 
 <template lang="pug">
@@ -37,6 +37,4 @@ q-dialog(v-model='confirm' persistent)
       )
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

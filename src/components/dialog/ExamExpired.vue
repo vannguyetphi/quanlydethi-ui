@@ -1,16 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 import BaseDialog from "components/dialog/BaseDialog.vue";
 
-const dialog = ref(null)
+const dialog = ref(null);
 const confirm = async () => {
-
-  dialog.value.close()
-}
+  dialog.value.close();
+};
 
 defineExpose({
-  dialog
-})
+  dialog,
+});
 </script>
 
 <template lang="pug">

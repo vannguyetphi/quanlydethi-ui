@@ -1,8 +1,8 @@
 <script setup>
-import { provide, inject, ref } from 'vue'
-import { Notify } from 'quasar'
+import { provide, inject, ref } from "vue";
+import { Notify } from "quasar";
 import { api } from "boot/axios";
-import moment from 'moment'
+import moment from "moment";
 import { useAuthStore } from "stores/auth";
 import { useExamStore } from "stores/exam";
 import { useSubjectStore } from "stores/subject";
@@ -11,100 +11,114 @@ import { storeToRefs } from "pinia";
 import ExamDetailDialog from "components/ExamDetailDialog.vue";
 import AddSubjectDialog from "components/AddSubjectDialog.vue";
 
-const authStore = useAuthStore()
-const examStore = useExamStore()
-const subjectStore = useSubjectStore()
-const questionStore = useQuestionStore()
-const exams = storeToRefs(examStore).examOpts
-const subjects = storeToRefs(subjectStore).subjectOpts
-const questions = storeToRefs(questionStore).questions
+const authStore = useAuthStore();
+const examStore = useExamStore();
+const subjectStore = useSubjectStore();
+const questionStore = useQuestionStore();
+const exams = storeToRefs(examStore).examOpts;
+const subjects = storeToRefs(subjectStore).subjectOpts;
+const questions = storeToRefs(questionStore).questions;
 
-const examName = ref('')
-const examDuration = ref(0)
-const examSelector = ref(null)
-const subjectSelector = ref(null)
-const isExamDetailActive = ref(false)
-const subjectDialog = ref(false)
+const examName = ref("");
+const examDuration = ref(0);
+const examSelector = ref(null);
+const subjectSelector = ref(null);
+const isExamDetailActive = ref(false);
+const subjectDialog = ref(false);
 
-const isTestActive = inject('isTestActive')
-const isQuestionActive = inject('isQuestionActive')
+const isTestActive = inject("isTestActive");
+const isQuestionActive = inject("isQuestionActive");
 
 const columns = [
   {
-    name: 'id',
+    name: "id",
     required: true,
-    label: 'ID',
-    align: 'left',
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-  { name: 'title', align: 'left', label: 'Tiêu đề', field: 'title', sortable: true },
-  { name: 'content',
-    align: 'left',
-    label: 'Nội dung',
-    field: 'content',
+    label: "ID",
+    align: "left",
+    field: (row) => row.id,
+    format: (val) => `${val}`,
     sortable: true,
-    style: 'width: 300px',
-    format: val => val.split(' ').slice(0, 10).join(' ') + '...'
   },
-  { name: 'type',
-    align: 'left',
-    label: 'Loại câu hỏi',
-    field: 'type',
+  {
+    name: "title",
+    align: "left",
+    label: "Tiêu đề",
+    field: "title",
     sortable: true,
-    format: val => val === 1 ? 'Lý thuyết' : 'Thực hành'
   },
-  { name: 'answer',
-    align: 'left',
-    label: 'Đáp án',
-    field: 'answer',
+  {
+    name: "content",
+    align: "left",
+    label: "Nội dung",
+    field: "content",
+    sortable: true,
+    style: "width: 300px",
+    format: (val) => val.split(" ").slice(0, 10).join(" ") + "...",
   },
-  { name: 'created_at', label: 'Ngày tạo', field: 'created_at', format: val => moment(val).format('MM-DD-YYYY') },
-  { name: 'updated_at', label: 'Ngày sửa', field: 'updated_at', format: val => moment(val).format('MM-DD-YYYY') },
-]
+  {
+    name: "type",
+    align: "left",
+    label: "Loại câu hỏi",
+    field: "type",
+    sortable: true,
+    format: (val) => (val === 1 ? "Lý thuyết" : "Thực hành"),
+  },
+  { name: "answer", align: "left", label: "Đáp án", field: "answer" },
+  {
+    name: "created_at",
+    label: "Ngày tạo",
+    field: "created_at",
+    format: (val) => moment(val).format("MM-DD-YYYY"),
+  },
+  {
+    name: "updated_at",
+    label: "Ngày sửa",
+    field: "updated_at",
+    format: (val) => moment(val).format("MM-DD-YYYY"),
+  },
+];
 
-const newExamLoading = ref(false)
+const newExamLoading = ref(false);
 const newExam = async () => {
-  newExamLoading.value = true
+  newExamLoading.value = true;
   const data = {
-    'lessonName': examName.value,
-    'answerTime': +examDuration.value,
-    'userCreatedId': authStore.getUser.id
-  }
-  const response = await api.post('/lessons', data)
+    lessonName: examName.value,
+    answerTime: +examDuration.value,
+    userCreatedId: authStore.getUser.id,
+  };
+  const response = await api.post("/lessons", data);
   if (response.status === 200) {
     // alert success
-    examName.value = ''
-    examDuration.value = 0
-    await examStore.getExams()
+    examName.value = "";
+    examDuration.value = 0;
+    await examStore.getExams();
     Notify.create({
-      type: 'positive',
-      message: 'Thêm đề thi thành công',
-      position: 'top',
-    })
+      type: "positive",
+      message: "Thêm đề thi thành công",
+      position: "top",
+    });
   }
-  newExamLoading.value = false
-}
+  newExamLoading.value = false;
+};
 
-const addSubjectToExamLoading = ref(false)
+const addSubjectToExamLoading = ref(false);
 const addSubjectToExam = async () => {
-  addSubjectToExamLoading.value = true
+  addSubjectToExamLoading.value = true;
   const data = {
     examId: examSelector.value.value,
     subjectId: subjectSelector.value.value,
-  }
-  await subjectStore.addSubjectToExam(data)
+  };
+  await subjectStore.addSubjectToExam(data);
   Notify.create({
-    type: 'positive',
-    message: 'Thêm môn học vào đề thi thành công',
-    position: 'top',
-  })
-  addSubjectToExamLoading.value = false
-}
+    type: "positive",
+    message: "Thêm môn học vào đề thi thành công",
+    position: "top",
+  });
+  addSubjectToExamLoading.value = false;
+};
 
-provide('isExamDetailActive', isExamDetailActive)
-provide('subjectDialog', subjectDialog)
+provide("isExamDetailActive", isExamDetailActive);
+provide("subjectDialog", subjectDialog);
 </script>
 
 <template lang="pug">
@@ -160,6 +174,4 @@ q-dialog(v-model="isTestActive" full-width)
   add-subject-dialog
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

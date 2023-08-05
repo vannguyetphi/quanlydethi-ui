@@ -1,9 +1,9 @@
 <script setup>
-import { storeToRefs } from 'pinia'
-import { useExamStore } from 'stores/exam'
+import { storeToRefs } from "pinia";
+import { useExamStore } from "stores/exam";
 
-const examStore = useExamStore()
-const exam = storeToRefs(examStore).exam
+const examStore = useExamStore();
+const exam = storeToRefs(examStore).exam;
 </script>
 
 <template lang="pug">
@@ -14,6 +14,4 @@ div(v-if="exam")
     .text-h6.mt-4 - Chọn môn học để bắt đầu làm
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

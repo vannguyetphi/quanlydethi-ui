@@ -1,14 +1,14 @@
 <script setup>
-import { inject, ref, watch } from 'vue'
+import { inject, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { useQuestionStore } from 'stores/question'
+import { useQuestionStore } from "stores/question";
 
-const examInfo = inject('examInfo')
+const examInfo = inject("examInfo");
 
-const questionStore = useQuestionStore()
-const examDetails = storeToRefs(questionStore).questionTransform
-const tab = ref('')
-const isActive = inject('detailView')
+const questionStore = useQuestionStore();
+const examDetails = storeToRefs(questionStore).questionTransform;
+const tab = ref("");
+const isActive = inject("detailView");
 </script>
 
 <template lang="pug">
@@ -71,6 +71,4 @@ q-dialog(v-model="isActive" full-width)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

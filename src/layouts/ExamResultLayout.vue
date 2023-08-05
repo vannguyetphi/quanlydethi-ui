@@ -1,15 +1,15 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { useExamStore } from 'stores/exam'
-import { useStudentStore } from 'stores/student'
+import { ref, onMounted, watch } from "vue";
+import { useExamStore } from "stores/exam";
+import { useStudentStore } from "stores/student";
 
-const examStore = useExamStore()
-const studentStore = useStudentStore()
-const student =  studentStore.student
+const examStore = useExamStore();
+const studentStore = useStudentStore();
+const student = studentStore.student;
 
-onMounted(async () =>  {
-  await examStore.getExamResults({ studentId: student.id })
-})
+onMounted(async () => {
+  await examStore.getExamResults({ studentId: student.id });
+});
 </script>
 
 <template lang="pug">

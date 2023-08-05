@@ -1,38 +1,42 @@
 <script setup>
-import { inject, ref, provide } from 'vue'
+import { inject, ref, provide } from "vue";
 import { storeToRefs } from "pinia";
 import { useExamStore } from "stores/exam";
 import { useQuestionStore } from "stores/question";
 import QuestionsTable from "components/QuestionsTable.vue";
 
-const examStore = useExamStore()
-const questionStore = useQuestionStore()
-const exams = storeToRefs(examStore).examOpts
-const examSubjects = storeToRefs(examStore).examSubjects
-const examSelector = ref(null)
-const targetSubjectId = ref(null)
-const targetExamId = ref(null)
-const isQuestionActive = ref(false)
+const examStore = useExamStore();
+const questionStore = useQuestionStore();
+const exams = storeToRefs(examStore).examOpts;
+const examSubjects = storeToRefs(examStore).examSubjects;
+const examSelector = ref(null);
+const targetSubjectId = ref(null);
+const targetExamId = ref(null);
+const isQuestionActive = ref(false);
 
 const onExamChange = async (v) => {
-  targetExamId.value = v.value
-  await examStore.getExamSubjects({ examId: v.value })
-}
+  targetExamId.value = v.value;
+  await examStore.getExamSubjects({ examId: v.value });
+};
 const openQuestionTable = (subjectId) => {
-  targetSubjectId.value = subjectId
-  isQuestionActive.value = !isQuestionActive.value
-}
-const handleSelectedLoading = ref(false)
+  targetSubjectId.value = subjectId;
+  isQuestionActive.value = !isQuestionActive.value;
+};
+const handleSelectedLoading = ref(false);
 const handleSelected = async (data) => {
-  handleSelectedLoading.value = true
-  const questionIds = data.value.map(d => d.id)
-  await questionStore.addQuestionToExam({ examId: targetExamId.value, subjectId: targetSubjectId.value, questionIds })
-  handleSelectedLoading.value = false
-    isQuestionActive.value = false
-}
-const isActive = inject('isExamDetailActive')
-provide('isQuestionActive', isQuestionActive)
-provide('handleSelectedLoading', handleSelectedLoading)
+  handleSelectedLoading.value = true;
+  const questionIds = data.value.map((d) => d.id);
+  await questionStore.addQuestionToExam({
+    examId: targetExamId.value,
+    subjectId: targetSubjectId.value,
+    questionIds,
+  });
+  handleSelectedLoading.value = false;
+  isQuestionActive.value = false;
+};
+const isActive = inject("isExamDetailActive");
+provide("isQuestionActive", isQuestionActive);
+provide("handleSelectedLoading", handleSelectedLoading);
 </script>
 
 <template lang="pug">
@@ -62,6 +66,4 @@ q-dialog(v-model="isActive" full-width)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

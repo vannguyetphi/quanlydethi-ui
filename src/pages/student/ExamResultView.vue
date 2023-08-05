@@ -1,38 +1,40 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useExamStore } from 'stores/exam'
-import { useStudentStore } from 'stores/student'
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useExamStore } from "stores/exam";
+import { useStudentStore } from "stores/student";
 
-const route = useRoute()
-const examStore = useExamStore()
-const studentStore = useStudentStore()
-const student =  studentStore.student
-const exam = storeToRefs(examStore).examSingleResult
-const results = storeToRefs(examStore).groupResult
-const tab = ref('')
-const markCorrectAnswer  = (q, h) => {
-  const _q = q.toLowerCase()
+const route = useRoute();
+const examStore = useExamStore();
+const studentStore = useStudentStore();
+const student = studentStore.student;
+const exam = storeToRefs(examStore).examSingleResult;
+const results = storeToRefs(examStore).groupResult;
+const tab = ref("");
+const markCorrectAnswer = (q, h) => {
+  const _q = q.toLowerCase();
 
-  if (_q.length === 1) return _q.indexOf(h) !== -1
-  return _q.split(',').includes(h)
-}
+  if (_q.length === 1) return _q.indexOf(h) !== -1;
+  return _q.split(",").includes(h);
+};
 const calcGrade = (exam, qSize) => {
-  let sum = 0
-  exam.forEach(ex => {
-    if (ex.questionAnswer.toLowerCase() === ex.studentAnswer.toLowerCase()) sum += 1
-  })
-  const pointPerQ = 10 / qSize
+  let sum = 0;
+  exam.forEach((ex) => {
+    if (ex.questionAnswer.toLowerCase() === ex.studentAnswer.toLowerCase())
+      sum += 1;
+  });
+  const pointPerQ = 10 / qSize;
 
-  return sum * pointPerQ
-}
+  return sum * pointPerQ;
+};
 onMounted(async () => {
-  const examId = route.params.examId
-  if (examStore.examResults.length === 0) await examStore.getExamResults({ studentId: student.id })
-  examStore.setSingleResult(examId)
-  tab.value = results.value[Object.keys(results.value)[0]][0].subjectName
-})
+  const examId = route.params.examId;
+  if (examStore.examResults.length === 0)
+    await examStore.getExamResults({ studentId: student.id });
+  examStore.setSingleResult(examId);
+  tab.value = results.value[Object.keys(results.value)[0]][0].subjectName;
+});
 </script>
 
 <template lang="pug">

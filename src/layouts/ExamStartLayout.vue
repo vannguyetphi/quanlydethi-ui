@@ -1,53 +1,60 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
-import { useExamStore } from 'stores/exam'
-import { useStudentStore } from 'stores/student'
-import { useQuestionStore } from 'stores/question'
-import useTimers from 'src/composables/useTimer'
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+import { useExamStore } from "stores/exam";
+import { useStudentStore } from "stores/student";
+import { useQuestionStore } from "stores/question";
+import useTimers from "src/composables/useTimer";
 import ExamExpired from "components/dialog/ExamExpired.vue";
 
-const route = useRoute()
-const router = useRouter()
-const timers = useTimers()
-const examStore = useExamStore()
-const studentStore = useStudentStore()
-const student = storeToRefs(studentStore).student
-const questionStore = useQuestionStore()
-const exam = storeToRefs(examStore).exam
-const examSubjects = storeToRefs(examStore).examSubjects
-const examState = storeToRefs(examStore).examState
-const drawer = ref(false)
-const examId = route.params.examId || ''
-const loading = ref(false)
-const examExpired = ref(null)
-const examExpiredTimeout = ref(null)
+const route = useRoute();
+const router = useRouter();
+const timers = useTimers();
+const examStore = useExamStore();
+const studentStore = useStudentStore();
+const student = storeToRefs(studentStore).student;
+const questionStore = useQuestionStore();
+const exam = storeToRefs(examStore).exam;
+const examSubjects = storeToRefs(examStore).examSubjects;
+const examState = storeToRefs(examStore).examState;
+const drawer = ref(false);
+const examId = route.params.examId || "";
+const loading = ref(false);
+const examExpired = ref(null);
+const examExpiredTimeout = ref(null);
 const pickSubject = (subject) => {
-  examStore.setExamState(subject.code)
-  router.push({ name: 'StudentExamStart', params: { subject: subject.id } })
-  if (examStore.examSubjectDone.length === 0) timers.addTimer({ minutes: +exam.value.answerTime * 60 })
-}
+  examStore.setExamState(subject.code);
+  router.push({ name: "StudentExamStart", params: { subject: subject.id } });
+  if (examStore.examSubjectDone.length === 0)
+    timers.addTimer({ minutes: +exam.value.answerTime * 60 });
+};
 onMounted(async () => {
-  loading.value = true
-  await Promise.all([examStore.getExam(examId), examStore.getExamSubjects({ examId })])
-  timers.countdown.value = exam.value.answerTime + ': 00'
-  loading.value = false
-})
+  loading.value = true;
+  await Promise.all([
+    examStore.getExam(examId),
+    examStore.getExamSubjects({ examId }),
+  ]);
+  timers.countdown.value = exam.value.answerTime + ": 00";
+  loading.value = false;
+});
 onUnmounted(() => {
-  timers.countdown.value = exam.value.answerTime + ': 00'
-  timers.clearTimer()
-})
-watch(() => timers.isTimeout.value, () => {
-  examExpired.value.dialog.open()
-  examStore.addExpiredExam(exam.value.id)
-  timers.isTimeout.value = false
-  examExpiredTimeout.value = setTimeout(() => {
-    examExpired.value.dialog.close()
-    router.push({ name: 'StudentExamPicker' })
-  }, 3000)
-})
+  timers.countdown.value = exam.value.answerTime + ": 00";
+  timers.clearTimer();
+});
+watch(
+  () => timers.isTimeout.value,
+  () => {
+    examExpired.value.dialog.open();
+    examStore.addExpiredExam(exam.value.id);
+    timers.isTimeout.value = false;
+    examExpiredTimeout.value = setTimeout(() => {
+      examExpired.value.dialog.close();
+      router.push({ name: "StudentExamPicker" });
+    }, 3000);
+  }
+);
 </script>
 
 <template lang="pug">

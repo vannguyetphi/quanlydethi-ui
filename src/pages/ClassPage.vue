@@ -1,49 +1,43 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { useClassroomStore } from "stores/classroom";
-import moment from 'moment'
+import moment from "moment";
 import AddClassroomDialog from "components/dialog/AddClassroomDialog.vue";
 
-const dialog = ref(null)
-const classroomStore = useClassroomStore()
-const classrooms = storeToRefs(classroomStore).classrooms
+const dialog = ref(null);
+const classroomStore = useClassroomStore();
+const classrooms = storeToRefs(classroomStore).classrooms;
 const columns = [
   {
-    name: 'id',
+    name: "id",
     required: true,
-    label: 'ID',
-    align: 'left',
-    field: row => row.id,
-    sortable: true
-  },
-  { name: 'name',
-    label: 'Lớp',
-    field: 'name',
-    sortable: true
-  },
-  { name: 'code',
-    label: 'Mã lớp',
-    field: 'code',
-    sortable: true
-  },
-  { name: 'created_at',
-    label: 'Ngày tạo',
-    field: 'created_at',
+    label: "ID",
+    align: "left",
+    field: (row) => row.id,
     sortable: true,
-    format: val => moment(val).format('MM-DD-YYYY')
   },
-  { name: 'updated_at',
-    label: 'Ngày sửa',
-    field: 'updated_at',
+  { name: "name", label: "Lớp", field: "name", sortable: true },
+  { name: "code", label: "Mã lớp", field: "code", sortable: true },
+  {
+    name: "created_at",
+    label: "Ngày tạo",
+    field: "created_at",
     sortable: true,
-    format: val => moment(val).format('MM-DD-YYYY')
+    format: (val) => moment(val).format("MM-DD-YYYY"),
   },
-]
+  {
+    name: "updated_at",
+    label: "Ngày sửa",
+    field: "updated_at",
+    sortable: true,
+    format: (val) => moment(val).format("MM-DD-YYYY"),
+  },
+];
 
-onMounted(async() => {
-  await classroomStore.fetchClassrooms()
-})
+onMounted(async () => {
+  await classroomStore.fetchClassrooms();
+});
 </script>
 
 <template lang="pug">
@@ -60,6 +54,4 @@ onMounted(async() => {
   add-classroom-dialog(ref="dialog")
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

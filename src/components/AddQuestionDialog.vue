@@ -1,76 +1,78 @@
 <script setup>
-import { ref, inject,  reactive } from 'vue'
-import { Notify } from 'quasar'
+import { ref, inject, reactive } from "vue";
+import { Notify } from "quasar";
 import { useQuestionStore } from "stores/question";
 
-const questionStore = useQuestionStore()
-const isActive = inject('isQuestionActive')
-const model = ref([])
+const questionStore = useQuestionStore();
+const isActive = inject("isQuestionActive");
+const model = ref([]);
 const options = [
   {
-    label: 'A',
-    value: 'A'
+    label: "A",
+    value: "A",
   },
   {
-    label: 'B',
-    value: 'B'
+    label: "B",
+    value: "B",
   },
   {
-    label: 'C',
-    value: 'C'
+    label: "C",
+    value: "C",
   },
   {
-    label: 'D',
-    value: 'D'
-  }
-]
+    label: "D",
+    value: "D",
+  },
+];
 const questionObj = reactive({
-  title: '',
-  content: '',
-  type: '',
-  level: '',
-  A: '',
-  B: '',
-  C: '',
-  D: '',
-  answer: '',
-  img: ''
-})
-const loading = ref(false)
-const validInputs= () => {
-  return questionObj.title &&
+  title: "",
+  content: "",
+  type: "",
+  level: "",
+  A: "",
+  B: "",
+  C: "",
+  D: "",
+  answer: "",
+  img: "",
+});
+const loading = ref(false);
+const validInputs = () => {
+  return (
+    questionObj.title &&
     questionObj.content &&
     questionObj.type &&
     questionObj.A &&
     questionObj.B &&
     questionObj.C &&
     questionObj.D &&
-    model.value.join(',')
-}
+    model.value.join(",")
+  );
+};
 const newQuestion = async () => {
-  loading.value = true
-  questionObj.answer = model.value.join(',')
-  questionObj.type = questionObj.type.value
-  await questionStore.newQuestion(questionObj)
-  await questionStore.getQuestions()
-  questionObj.title = ''
-  questionObj.content = ''
-  questionObj.type = ''
-  questionObj.level = ''
-  questionObj.A = ''
-  questionObj.B = ''
-  questionObj.C = ''
-  questionObj.D = ''
-  questionObj.answer = ''
-  questionObj.img = ''
-  loading.value = false
+  loading.value = true;
+  questionObj.answer = model.value.join(",");
+  questionObj.type = questionObj.type.value;
+  await questionStore.newQuestion(questionObj);
+  await questionStore.getQuestions();
+  questionObj.title = "";
+  questionObj.content = "";
+  questionObj.type = "";
+  questionObj.level = "";
+  questionObj.A = "";
+  questionObj.B = "";
+  questionObj.C = "";
+  questionObj.D = "";
+  questionObj.answer = "";
+  questionObj.img = "";
+  loading.value = false;
 
   Notify.create({
-    type: 'positive',
-    position: 'top',
-    message: 'Thêm câu hỏi thành công'
-  })
-}
+    type: "positive",
+    position: "top",
+    message: "Thêm câu hỏi thành công",
+  });
+};
 </script>
 
 <template lang="pug">
@@ -126,6 +128,4 @@ q-dialog(v-model="isActive" full-width)
       q-btn(flat label="Xác nhận" color="primary" v-close-popup)
 </template>
 
-<style scoped lang="sass">
-
-</style>
+<style scoped lang="sass"></style>

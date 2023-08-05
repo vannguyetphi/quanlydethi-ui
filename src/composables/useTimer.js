@@ -1,11 +1,11 @@
-import { ref } from 'vue'
-const countdown = ref('')
-const isTimeout = ref(false)
-let intervalId
+import { ref } from "vue";
+const countdown = ref("");
+const isTimeout = ref(false);
+let intervalId;
 const addTimer = ({ minutes }) => {
-  let timer = minutes
-  intervalId = setInterval( () => {
-    let minutes = parseInt(timer / 60, 10)
+  let timer = minutes;
+  intervalId = setInterval(() => {
+    let minutes = parseInt(timer / 60, 10);
     let seconds = parseInt(timer % 60, 10);
 
     minutes = minutes < 10 ? "0" + minutes : minutes;
@@ -14,17 +14,16 @@ const addTimer = ({ minutes }) => {
     countdown.value = `${minutes}: ${seconds}`;
     if (--timer < 0) {
       timer = 0;
-      clearInterval(intervalId)
-      isTimeout.value = true
+      clearInterval(intervalId);
+      isTimeout.value = true;
     }
   }, 1000);
-}
+};
 
 const clearTimer = () => {
-  clearInterval(intervalId)
-}
+  clearInterval(intervalId);
+};
 
-
-export default function useTimers () {
-  return { addTimer, clearTimer, countdown, isTimeout }
+export default function useTimers() {
+  return { addTimer, clearTimer, countdown, isTimeout };
 }

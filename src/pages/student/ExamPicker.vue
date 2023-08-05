@@ -1,28 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 import { useExamStore } from "stores/exam";
 
-const examStore = useExamStore()
-const router = useRouter()
-const exams = storeToRefs(examStore).exams
-const examExpiredList = storeToRefs(examStore).examExpired
+const examStore = useExamStore();
+const router = useRouter();
+const exams = storeToRefs(examStore).exams;
+const examExpiredList = storeToRefs(examStore).examExpired;
 
-const spinner = ref(false)
+const spinner = ref(false);
 const fetchExams = async () => {
-  spinner.value = true
-  await examStore.getExams()
-  spinner.value = false
-}
+  spinner.value = true;
+  await examStore.getExams();
+  spinner.value = false;
+};
 const cardClick = (examId) => {
-  if (examExpiredList.value.includes(examId)) return
-  router.push({ name: 'StudentExamWelcome', params: { examId } })
-}
+  if (examExpiredList.value.includes(examId)) return;
+  router.push({ name: "StudentExamWelcome", params: { examId } });
+};
 
 onMounted(async () => {
-  await fetchExams()
-})
+  await fetchExams();
+});
 </script>
 
 <template lang="pug">

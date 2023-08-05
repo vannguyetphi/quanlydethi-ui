@@ -1,19 +1,19 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { useAuthStore } from 'stores/auth'
+import { ref, reactive } from "vue";
+import { useAuthStore } from "stores/auth";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const authUser = reactive({
-  username: '',
-  password: ''
-})
-const loading = ref(false)
+  username: "",
+  password: "",
+});
+const loading = ref(false);
 
 const auth = async () => {
-  loading.value = true
-  await authStore.authenticate(authUser)
-  loading.value = false
-}
+  loading.value = true;
+  await authStore.authenticate(authUser);
+  loading.value = false;
+};
 </script>
 
 <template lang="pug">
