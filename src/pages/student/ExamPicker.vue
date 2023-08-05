@@ -55,7 +55,13 @@ q-layout
                 span.ml-2 {{ exam.answerTime }} phút
 
       .mt-12
-        q-btn(label="Xem kết quả thi" color="secondary" size="lg" :to="{name: 'StudentExamResult'}")
+        q-btn(
+          label="Xem kết quả thi"
+          color="secondary"
+          size="lg"
+          :to="{name: 'StudentExamResult'}"
+          v-if="examExpiredList.length > 0"
+        )
 </template>
 
 <style scoped lang="sass">

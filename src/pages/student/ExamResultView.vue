@@ -12,12 +12,20 @@ const student =  studentStore.student
 const exam = storeToRefs(examStore).examSingleResult
 const results = storeToRefs(examStore).groupResult
 const tab = ref('')
-const markCorrectAnswer  = (q, a, h) => {
+const markCorrectAnswer  = (q, h) => {
   const _q = q.toLowerCase()
-  const _a = a.toLowerCase()
 
   if (_q.length === 1) return _q.indexOf(h) !== -1
   return _q.split(',').includes(h)
+}
+const calcGrade = (exam, qSize) => {
+  let sum = 0
+  exam.forEach(ex => {
+    if (ex.questionAnswer.toLowerCase() === ex.studentAnswer.toLowerCase()) sum += 1
+  })
+  const pointPerQ = 10 / qSize
+
+  return sum * pointPerQ
 }
 onMounted(async () => {
   const examId = route.params.examId
@@ -30,29 +38,27 @@ onMounted(async () => {
 <template lang="pug">
 div(v-if="exam.length > 0")
   .text-4xl.text-white Kết quả thi {{ exam[0].lessonName }}
-  q-card.card.mt-12
-    q-tabs.text-white(v-model='tab' dense active-color='secondary' indicator-color='secondary' align='justify' narrow-indicator)
-      q-tab.text-2xl.font-bold(:name='ex[0].subjectName' v-for="ex in results" :key="ex")
-        p.py-4 {{ ex[0].subjectName }}
-
-    q-separator
-
-    q-tab-panels(v-model='tab' animated)
-      q-tab-panel(v-for="ex in results" :key="ex" :name='ex[0].subjectName')
-        div(v-for="q in ex" :key="q.id")
+  .mt-12.row.q-col-gutter-md
+    .col-12(v-for="ex in results" :key="ex")
+      q-card.text-black
+        q-card-section.text-4xl {{ ex[0].subjectName }}
+        q-card-section.text-3xl.text-negative.font-bold Điểm: {{ calcGrade(ex, ex.length) }}
+        q-card-section(v-for="q in ex" :key="q.id")
           .text-h6 {{ q.questionTitle }}: {{ q.questionContent }}
-          p(:class="{'text-secondary': markCorrectAnswer(q.questionAnswer, q.studentAnswer, 'a')}") A: {{ q.answerA }}
-          p(:class="{'text-secondary': markCorrectAnswer(q.questionAnswer, q.studentAnswer, 'b')}") B: {{ q.answerB }}
-          p(:class="{'text-secondary': markCorrectAnswer(q.questionAnswer, q.studentAnswer, 'c')}") C: {{ q.answerC }}
-          p(:class="{'text-secondary': markCorrectAnswer(q.questionAnswer, q.studentAnswer, 'd')}") D: {{ q.answerD }}
+          p.text-lg(
+            :class="{'text-positive font-bold': markCorrectAnswer(q.questionAnswer, 'a')}"
+          ) A: {{ q.answerA }}
+          p.text-lg(
+            :class="{'text-positive font-bold': markCorrectAnswer(q.questionAnswer, 'b')}"
+          ) B: {{ q.answerB }}
+          p.text-lg(
+            :class="{'text-positive font-bold': markCorrectAnswer(q.questionAnswer, 'c')}"
+          ) C: {{ q.answerC }}
+          p.text-lg(
+            :class="{'text-positive font-bold': markCorrectAnswer(q.questionAnswer, 'd')}"
+          ) D: {{ q.answerD }}
+          p.text-lg.mt-4.font-bold Đáp án của bạn: {{ q.studentAnswer }}
+            span.ml-2(
+              :class="q.questionAnswer.toLowerCase() === q.studentAnswer.toLowerCase() ? 'text-positive' : 'text-negative'"
+              ) {{ q.questionAnswer.toLowerCase() === q.studentAnswer.toLowerCase() ? 'Đúng' : 'Sai' }}
 </template>
-
-<style scoped lang="sass">
-.card
-  background: rgba( 255, 255, 255, 0.1 )
-  box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 )
-  backdrop-filter: blur( 4px )
-  -webkit-backdrop-filter: blur( 4px )
-  border-radius: 10px
-  border: 1px solid rgba( 255, 255, 255, 0.18 )
-</style>

@@ -16,7 +16,8 @@ onMounted(async () =>  {
 q-layout.shadow-2.rounded-borders.h-screen(view='lHh Lpr lff' container)
   q-drawer(v-model='drawer' show-if-above :width='300' :breakpoint='400' class="bg-[#242529]")
     q-scroll-area(style='height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd')
-      q-list(padding separator)
+      .p-4.text-right
+        q-btn(label="Quay lại" color="negative" unelevated @click="$router.back()" rounded)
 
     q-img.absolute-top(src='~assets/bg.jpg' style='height: 150px')
   q-page-container

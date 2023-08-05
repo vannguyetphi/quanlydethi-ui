@@ -7,7 +7,7 @@ export const useExamStore = defineStore('exam', {
     exams: [],
     examSubjects: [],
     examSubjectDone: [],
-    examExpired: [],
+    examExpired: JSON.parse(localStorage.getItem('examExpired')) || [],
     examResults: [],
     examSingleResult: [],
     loader: {
@@ -17,6 +17,8 @@ export const useExamStore = defineStore('exam', {
   getters: {
     examOpts: (state) => state.exams.map(exa => ({ label: exa.lessonName, value: exa.id })),
     examState: (state) => {
+      if (localStorage.getItem('examState')) return JSON.parse(localStorage.getItem('examState'))
+
       const obj = {}
       state.examSubjects.forEach(xs => {
         if (!obj[xs.code]) obj[xs.code] = {}
@@ -36,6 +38,7 @@ export const useExamStore = defineStore('exam', {
       Object.keys(this.examState).forEach(exs => {
         this.examState[exs].active = exs === subjectId;
       })
+      localStorage.setItem('examState', JSON.stringify(this.examState))
     },
     markExamState() {
       Object.keys(this.examState).forEach(exs => {
@@ -44,6 +47,7 @@ export const useExamStore = defineStore('exam', {
     },
     addExpiredExam(id) {
       this.examExpired.push(id)
+      localStorage.setItem('examExpired', JSON.stringify(this.examExpired))
     },
     setExamSubjectDone(payload) {
       this.examSubjectDone.push(payload)
